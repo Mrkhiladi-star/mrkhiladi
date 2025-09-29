@@ -1,0 +1,11 @@
+export const db = "portfolio";
+export const profileCollection = "profile";
+export const projectCollection = "projects";
+export const skillCollection = "skills";
+export const contactCollection = "contacts";
+export const experienceCollection = "experience";
+export const educationCollection = "education";
+export const achievementsCollection = "achievements";
+export const blogCollection = "blog";
+export const articleCollection = "article";
+export const portfolioImagesBucket = "portfolio-images";
