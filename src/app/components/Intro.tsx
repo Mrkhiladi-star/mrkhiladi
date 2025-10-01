@@ -4,12 +4,14 @@ import { motion } from 'framer-motion';
 import { useAuthStore } from '@/store/Auth';
 import { getIntroData } from '@/app/actions/get-intro-data';
 import { DotLoader } from '@/components/ui/DotLoader';
+
 interface IntroData {
   greeting: string;
   name: string;
   description: string;
   subtitle: string;
 }
+
 const LiveIndicator = () => (
   <div className="flex items-center space-x-2 mb-4">
     <span className="relative flex h-3 w-3">
@@ -19,6 +21,7 @@ const LiveIndicator = () => (
     <span className="text-xs text-green-400">Available for New Ideas 🌟</span>
   </div>
 );
+
 const Star = ({ style }: { style: React.CSSProperties }) => (
   <motion.div
     style={style}
@@ -32,6 +35,7 @@ const Star = ({ style }: { style: React.CSSProperties }) => (
     className="absolute rounded-full bg-white shadow-[0_0_8px_2px_rgba(255,255,255,0.9)] z-20"
   />
 );
+
 export default function Intro() {
   const [introData, setIntroData] = useState<IntroData | null>(null);
   const isAdmin = useAuthStore();
@@ -39,6 +43,7 @@ export default function Intro() {
   useEffect(() => {
     fetchData();
   }, []);
+
   const fetchData = async () => {
     try {
       const data = await getIntroData();
@@ -47,6 +52,7 @@ export default function Intro() {
       console.error('Error fetching intro data:', error);
     }
   };
+
   if (!introData) {
     return (
       <div className="h-screen flex items-center justify-center bg-black">
@@ -54,8 +60,10 @@ export default function Intro() {
       </div>
     );
   }
+
   return (
     <section className="relative min-h-screen flex items-center px-6 md:px-12 lg:px-20 py-20 overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
+      {/* stars bg */}
       <div className="pointer-events-none absolute inset-0 z-0">
         {Array.from({ length: 80 }).map((_, i) => (
           <Star
@@ -69,14 +77,17 @@ export default function Intro() {
           />
         ))}
       </div>
+
+      {/* glowing blobs */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        {/* center glow */}
         <div className="absolute left-1/2 top-1/3 transform -translate-x-1/2 -translate-y-1/2 w-[60rem] h-[60rem] rounded-full opacity-5 bg-gradient-to-r from-pink-500 to-indigo-500 blur-3xl animate-slow-blob"></div>
         <div className="absolute w-96 h-96 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 opacity-20 blur-2xl transform translate-x-[-10%] animate-blob-slow" style={{ top: '5%', left: '5%' }} />
         <div className="absolute w-72 h-72 rounded-full bg-gradient-to-r from-emerald-400 to-teal-600 opacity-15 blur-2xl transform animate-blob-slow" style={{ top: '60%', left: '10%' }} />
         <div className="absolute w-80 h-80 rounded-full bg-gradient-to-r from-pink-400 to-orange-400 opacity-15 blur-2xl transform animate-blob-slow" style={{ top: '20%', right: '5%' }} />
       </div>
+
       <div className="relative z-30 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        {/* left content */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -85,16 +96,13 @@ export default function Intro() {
         >
           <div className="flex items-center">
             <p className="text-2xl font-medium text-cyan-300">{introData.greeting}</p>
-            <div className="ml-48">
+            <div className="ml-12 sm:ml-20 md:ml-48">
               <LiveIndicator />
             </div>
           </div>
           <h1 className="text-5xl md:text-6xl font-extrabold mb-2 pb-2 bg-gradient-to-r from-purple-400 via-indigo-400 to-cyan-400 bg-clip-text text-transparent">
-  {introData.name}
-</h1>
-
-
-
+            {introData.name}
+          </h1>
           <h2 className="text-2xl md:text-3xl text-indigo-300 font-semibold">{introData.subtitle}</h2>
           <p className="text-lg md:text-xl max-w-xl text-gray-200 opacity-90 leading-relaxed">
             {introData.description}
@@ -121,39 +129,63 @@ export default function Intro() {
             </a>
           </div>
         </motion.div>
+
+        {/* right content (photos) */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="relative w-full h-[420px] flex items-center justify-center"
         >
-          <motion.div
-            whileHover={{ scale: 1.03, rotate: -3 }}
-            className="absolute rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-gray-800"
-            style={{ width: 170, height: 260, top: 40, left: 20, transform: 'rotate(-8deg)' }}
-          >
-            <img src="/images/profile/photo1.jpg" alt="Photo 1" className="w-full h-full object-cover" />
-          </motion.div>
+          {/* ✅ Mobile stacked photos (responsive, no cut) */}
+<div className="flex md:hidden gap-3 flex-wrap justify-center w-full">
+  <img
+    src="/images/profile/photo1.jpg"
+    alt="Photo 1"
+    className="flex-1 max-w-[100px] rounded-2xl object-cover shadow-2xl border-4 border-white"
+  />
+  <img
+    src="/images/profile/photo2.jpg"
+    alt="Photo 2"
+    className="flex-1 max-w-[120px] rounded-2xl object-cover shadow-2xl border-4 border-white"
+  />
+  <img
+    src="/images/profile/photo3.jpg"
+    alt="Photo 3"
+    className="flex-1 max-w-[100px] rounded-2xl object-cover shadow-2xl border-4 border-white"
+  />
+</div>
 
-          <motion.div
-            whileHover={{ scale: 1.04, rotate: 0 }}
-            className="absolute rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-gray-800"
-            style={{ width: 220, height: 320, top: 0, left: 120, zIndex: 20 }}
-          >
-            <img src="/images/profile/photo2.jpg" alt="Photo 2" className="w-full h-full object-cover" />
-          </motion.div>
 
-          <motion.div
-            whileHover={{ scale: 1.03, rotate: 4 }}
-            className="absolute rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-gray-800"
-            style={{ width: 170, height: 260, top: 80, left: 260, transform: 'rotate(8deg)', zIndex: 10 }}
-          >
-            <img src="/images/profile/photo3.jpg" alt="Photo 3" className="w-full h-full object-cover" />
-          </motion.div>
+          {/* ✅ Desktop collage photos */}
+          <div className="hidden md:block relative w-full h-full">
+            <motion.div
+              whileHover={{ scale: 1.03, rotate: -3 }}
+              className="absolute rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-gray-800"
+              style={{ width: 170, height: 260, top: 40, left: 20, transform: 'rotate(-8deg)' }}
+            >
+              <img src="/images/profile/photo1.jpg" alt="Photo 1" className="w-full h-full object-cover" />
+            </motion.div>
 
-          <div className="absolute inset-0 collage-float -z-0" />
+            <motion.div
+              whileHover={{ scale: 1.04, rotate: 0 }}
+              className="absolute rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-gray-800"
+              style={{ width: 220, height: 320, top: 0, left: 120, zIndex: 20 }}
+            >
+              <img src="/images/profile/photo2.jpg" alt="Photo 2" className="w-full h-full object-cover" />
+            </motion.div>
+
+            <motion.div
+              whileHover={{ scale: 1.03, rotate: 4 }}
+              className="absolute rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-gray-800"
+              style={{ width: 170, height: 260, top: 80, left: 260, transform: 'rotate(8deg)', zIndex: 10 }}
+            >
+              <img src="/images/profile/photo3.jpg" alt="Photo 3" className="w-full h-full object-cover" />
+            </motion.div>
+          </div>
         </motion.div>
       </div>
+
       <style jsx global>{`
         @keyframes blobSlow {
           0% { transform: translateY(0px) scale(1); }
@@ -171,7 +203,6 @@ export default function Intro() {
         }
         .collage-float { animation: floatSlow 6s ease-in-out infinite; }
       `}</style>
-      
     </section>
   );
 }

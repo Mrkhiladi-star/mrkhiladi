@@ -9,7 +9,10 @@ import Projects from "@/app/components/Projects";
 import About from "@/app/components/About";
 import Blog from "@/app/components/Blog";
 import Article from "@/app/components/Article";
+
 export default function HomePage() {
+  const currentYear = new Date().getFullYear();
+
   return (
     <div className="relative w-full bg-black text-white"> 
       <section id="home" className="min-h-screen relative">
@@ -42,6 +45,16 @@ export default function HomePage() {
       <section id="articles" className="min-h-screen bg-black"> 
         <Article />
       </section>
+      
+      <footer className="bg-gray-900 border-t border-gray-800 py-6 sm:py-8">
+  <div className="max-w-7xl mx-auto px-4 text-center">
+    <p className="text-gray-200 text-sm sm:text-base">
+      Copyright © {currentYear} Ramu Yadav. All rights reserved. <br />
+    
+    </p>
+  </div>
+</footer>
+
     </div>
   );
 }

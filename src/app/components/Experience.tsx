@@ -10,7 +10,7 @@ interface Experience {
   position: string;
   duration: string;
   sessionTag: string;
-  description: string[];
+  description: string[]; 
   technologies: string[];
   logo?: string;
 }
