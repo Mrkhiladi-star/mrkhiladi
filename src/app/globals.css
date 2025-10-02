@@ -165,3 +165,17 @@ html {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Fix for iOS Safari scrolling */
+@supports (-webkit-touch-callout: none) {
+  .ios-scroll-fix {
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+  }
+  
+  /* Force hardware acceleration for smooth scrolling */
+  .ios-scroll-fix > div {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+}
