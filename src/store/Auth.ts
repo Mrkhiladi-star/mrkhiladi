@@ -48,6 +48,8 @@ export const useAuthStore = create<IAuthStore>()(
       },
       async login(email: string, password: string) {
         try {
+         await account.deleteSessions().catch(() => {});
+
           const session = await account.createEmailPasswordSession(email, password);
           const user = await account.get<AdminPrefs>();
           const isAdmin = user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
