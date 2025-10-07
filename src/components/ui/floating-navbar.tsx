@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuthStore } from "@/store/Auth";
 import Image from "next/image";
 import { IconMenu2, IconX } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 
 export const FloatingNav = ({
   navItems,
@@ -17,7 +18,9 @@ export const FloatingNav = ({
   const [isVisible, setIsVisible] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const { session, logout } = useAuthStore();
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -41,6 +44,12 @@ export const FloatingNav = ({
     };
   }, [mobileMenuOpen]);
 
+  // Wrapper for logout that also redirects
+  const handleLogout = async () => {
+    await logout();
+    router.push("/"); // Redirect to home page after logout
+  };
+
   return (
     <div
       className="fixed top-0 left-0 right-0 z-50 h-24"
@@ -60,7 +69,7 @@ export const FloatingNav = ({
             )}
           >
             <div className="flex max-w-7xl w-full items-center justify-between px-4 md:px-8">
-              {/* Desktop nav - ONLY on large screens */}
+              {/* Desktop nav */}
               <div className="hidden lg:flex items-center space-x-8">
                 {navItems.map((navItem, idx) => (
                   <Link
@@ -78,19 +87,14 @@ export const FloatingNav = ({
                 ))}
               </div>
 
-              {/* Mobile hamburger - Show on ALL screens except large */}
+              {/* Mobile hamburger */}
               <div className="flex lg:hidden items-center space-x-4 w-full justify-between">
-                {/* Empty space for balance */}
                 <div className="w-6"></div>
-                
-                {/* Page title or logo - centered */}
                 <div className="flex-1 text-center">
                   <span className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">
                     Ramu Yadav
                   </span>
                 </div>
-                
-                {/* Hamburger button */}
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                   className="text-gray-700 dark:text-gray-200 focus:outline-none"
@@ -99,7 +103,7 @@ export const FloatingNav = ({
                 </button>
               </div>
 
-              {/* Right side: logos or logout - ONLY on large screens */}
+              {/* Right side */}
               <div className="hidden lg:flex items-center space-x-4">
                 {!session && (
                   <div className="flex items-center space-x-3">
@@ -110,7 +114,7 @@ export const FloatingNav = ({
                 )}
                 {session && (
                   <button
-                    onClick={logout}
+                    onClick={handleLogout}
                     className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
                   >
                     Logout
@@ -128,7 +132,7 @@ export const FloatingNav = ({
                   transition={{ duration: 0.3 }}
                   className="fixed top-0 left-0 w-screen h-screen z-[100] bg-black/95 flex flex-col"
                 >
-                  {/* Header with close button */}
+                  {/* Header */}
                   <div className="flex items-center justify-between p-6 border-b border-gray-700">
                     <span className="text-xl font-bold text-white">Menu</span>
                     <button
@@ -139,7 +143,7 @@ export const FloatingNav = ({
                     </button>
                   </div>
 
-                  {/* Scrollable menu items */}
+                  {/* Menu items */}
                   <div className="flex-1 overflow-y-auto py-4">
                     <div className="space-y-3 px-6">
                       {navItems.map((navItem, idx) => (
@@ -152,46 +156,26 @@ export const FloatingNav = ({
                              bg-white/10 hover:bg-white/20 backdrop-blur-sm 
                              transition-colors border border-white/10"
                         >
-                          <div className="flex-shrink-0">
-                            {navItem.icon}
-                          </div>
+                          <div className="flex-shrink-0">{navItem.icon}</div>
                           <span>{navItem.name}</span>
                         </Link>
                       ))}
                     </div>
                   </div>
 
-                  {/* Footer with logos/logout - FIXED at bottom */}
+                  {/* Footer */}
                   <div className="border-t border-gray-700 bg-black/50 backdrop-blur-sm p-6">
                     <div className="flex justify-center space-x-6">
                       {!session ? (
                         <>
-                          <Image 
-                            src="/images/logos/nit-mizoram.png" 
-                            alt="NIT Mizoram" 
-                            width={40} 
-                            height={40} 
-                            className="rounded-lg"
-                          />
-                          <Image 
-                            src="/images/logos/jnv.png" 
-                            alt="JNV" 
-                            width={40} 
-                            height={40} 
-                            className="rounded-lg"
-                          />
-                          <Image 
-                            src="/images/logos/cbse.png" 
-                            alt="CBSE" 
-                            width={40} 
-                            height={40} 
-                            className="rounded-lg"
-                          />
+                          <Image src="/images/logos/nit-mizoram.png" alt="NIT Mizoram" width={40} height={40} className="rounded-lg" />
+                          <Image src="/images/logos/jnv.png" alt="JNV" width={40} height={40} className="rounded-lg" />
+                          <Image src="/images/logos/cbse.png" alt="CBSE" width={40} height={40} className="rounded-lg" />
                         </>
                       ) : (
                         <button
                           onClick={() => {
-                            logout();
+                            handleLogout();
                             setMobileMenuOpen(false);
                           }}
                           className="px-6 py-3 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors font-medium"

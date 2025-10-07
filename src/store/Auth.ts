@@ -3,9 +3,9 @@ import { immer } from "zustand/middleware/immer";
 import { persist } from "zustand/middleware";
 import { AppwriteException, Models } from "appwrite";
 import { account } from "@/models/client/config";
-interface AdminPrefs {
 
-}
+interface AdminPrefs {}
+
 interface IAuthStore {
   session: Models.Session | null;
   user: Models.User<AdminPrefs> | null;
@@ -24,17 +24,20 @@ interface IAuthStore {
   }>;
   logout(): Promise<void>;
 }
+
 export const useAuthStore = create<IAuthStore>()(
   persist(
     immer((set) => ({
       session: null,
       user: null,
       isLoggedIn: false,
-      isAdmin: false, 
+      isAdmin: false,
       hydrated: false,
+
       setHydrated() {
         set({ hydrated: true });
       },
+
       async verifySession() {
         try {
           const session = await account.getSession("current");
@@ -42,17 +45,20 @@ export const useAuthStore = create<IAuthStore>()(
           const isAdmin = user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
           set({ session, user, isLoggedIn: !!session, isAdmin });
         } catch (error) {
-          console.log(error);
+          // No active session or guest session
           set({ session: null, user: null, isLoggedIn: false, isAdmin: false });
         }
       },
+
       async login(email: string, password: string) {
         try {
-         await account.deleteSessions().catch(() => {});
+          // Delete any old sessions first
+          await account.deleteSessions().catch(() => {});
 
           const session = await account.createEmailPasswordSession(email, password);
           const user = await account.get<AdminPrefs>();
           const isAdmin = user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+
           set({ session, user, isLoggedIn: !!session, isAdmin });
           return { success: true };
         } catch (error) {
@@ -63,10 +69,26 @@ export const useAuthStore = create<IAuthStore>()(
           };
         }
       },
+
       async logout() {
         try {
-          await account.deleteSession("current");
+          // Only attempt logout if a valid session exists
+          const session = await account.getSession("current").catch(() => null);
+          if (session) {
+            await account.deleteSession("current");
+          }
+
+          // Clear all store values
           set({ session: null, user: null, isLoggedIn: false, isAdmin: false });
+
+          // Clear possible stale cookies to remove guest sessions
+          document.cookie
+            .split(";")
+            .forEach(
+              (c) =>
+                (document.cookie =
+                  c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"))
+            );
         } catch (error) {
           console.error("Logout failed:", error);
         }
