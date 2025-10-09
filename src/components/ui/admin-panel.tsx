@@ -981,7 +981,7 @@ export default function AdminPanel({ activeTab }: { activeTab: string }) {
                   Add Tag
                 </Button>
               </div>
-            </div>
+            </div> 
           ))}
         </div>
       )}
@@ -1122,7 +1122,7 @@ export default function AdminPanel({ activeTab }: { activeTab: string }) {
                   onChange={(e) => handleArrayItemChange(index, 'excerpt', e.target.value)}
                   rows={3}
                 />
-              </div>
+              </div> 
 
               <div>
                 <Label htmlFor={`blog-content-${index}`}>Content</Label>

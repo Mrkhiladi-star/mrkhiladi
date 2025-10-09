@@ -110,7 +110,7 @@ export default function Experience() {
                               >
                                 {tech}
                               </span>
-                            ))}
+                            ))} 
                           </div>
                         </div>
                       )}

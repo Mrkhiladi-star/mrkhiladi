@@ -81,10 +81,6 @@ export default function Education() {
                   {edu.field}
                 </p>
                 <p className="text-gray-400 mb-4">{edu.description}</p>
-                <button className="flex items-center text-blue-400 hover:text-blue-300 transition-colors">
-                  <span className="mr-1">View Achievements ({getAchievementCount(edu.degree)})</span>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
-                </button>
               </div>
             </div>
           ))}

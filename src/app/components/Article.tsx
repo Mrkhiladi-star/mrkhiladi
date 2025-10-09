@@ -143,7 +143,7 @@ export default function Article() {
                         );
                     })}
                 </div>
-            </div>
+            </div> 
         </article>
     );
 }

@@ -4,7 +4,6 @@ import { BackgroundBeams } from '@/components/ui/background-beams';
 import { getAboutData } from '@/app/actions/get-about-data';
 import { IconCloud } from "@/components/ui/icon-cloud";
 import { DotLoader } from '@/components/ui/DotLoader';
-
 interface AboutData {
   bio: string;
   image: string | null;
@@ -13,14 +12,12 @@ interface AboutData {
     value: string;
   }[];
 }
-
 export default function About() {
   const [aboutData, setAboutData] = useState<AboutData | null>(null);
 
   useEffect(() => {
     fetchData();
   }, []);
-
   const fetchData = async () => {
     try {
       const data = await getAboutData();
@@ -29,7 +26,6 @@ export default function About() {
       console.error('Error fetching about data:', error);
     }
   };
-
   if (!aboutData) {
     return (
       <div className="h-screen flex items-center justify-center bg-black">
@@ -37,12 +33,10 @@ export default function About() {
       </div>
     );
   }
-
   return (
     <section id="about" className="py-20 px-4 md:px-8 lg:px-16 relative overflow-hidden bg-gradient-to-br from-gray-600 via-black to-gray-700 text-white min-h-screen flex items-center">
       <BackgroundBeams />
       <div className="max-w-6xl mx-auto relative z-10 w-full overflow-x-hidden">
-        {/* About Me Header */}
         <div className="text-center mb-8">
           <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-3">
             About Me
@@ -51,10 +45,7 @@ export default function About() {
             Hailing from a small village in Sitapur, I began my journey at JNV, where I nurtured my love for learning and excelled in academics and sports. Today, I'm a CSE student at NIT Mizoram, passionate about building innovative software and web solutions while continuing to explore, create, and grow.
           </p>
         </div>
-
-        {/* Main Content */}
-        <div className="flex flex-col lg:flex-row gap-8 items-center">
-          {/* Profile Image */}
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
           <div className="lg:w-2/5 w-full flex justify-center">
             <div className="relative group">
               <img
@@ -65,54 +56,38 @@ export default function About() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-xl" />
             </div>
           </div>
-
-          {/* Personal Details */}
           <div className="lg:w-3/5 w-full space-y-6">
-            {/* Skills Cloud */}
             <div className="w-full overflow-hidden">
               <SkillsIconCloud />
             </div>
-
-            {/* Personal Details */}
             <div className="w-full overflow-hidden">
               <h3 className="text-2xl font-bold text-white mb-4 flex items-center">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
                 Personal Details
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                {/* Stack layout for mobile, side-by-side for desktop */}
                 <div className="flex flex-col sm:flex-row sm:items-center p-3 bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 text-sm w-full">
                   <span className="font-semibold text-gray-200 sm:min-w-[120px] mb-1 sm:mb-0">Full Name:</span>
                   <span className="text-gray-300">Ramu Yadav</span>
                 </div>
-
                 <div className="flex flex-col sm:flex-row sm:items-center p-3 bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 text-sm w-full">
                   <span className="font-semibold text-gray-200 sm:min-w-[120px] mb-1 sm:mb-0">Date of Birth:</span>
                   <span className="text-gray-300">30th Sept 2004</span>
                 </div>
-
                 <div className="md:col-span-2 flex flex-col sm:flex-row p-3 bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 text-sm w-full">
                   <span className="font-semibold text-gray-200 sm:min-w-[120px] mb-1 sm:mb-0 shrink-0">Address:</span>
                   <span className="text-gray-300 break-words flex-1">
                     Village-Dena, Post-Umari (261121), District-Sitapur, UP
                   </span>
                 </div>
-
-                <div className="flex flex-col sm:flex-row sm:items-center p-3 bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 text-sm w-full">
-                  <span className="font-semibold text-gray-200 sm:min-w-[120px] mb-1 sm:mb-0">Schooling:</span>
-                  <span className="text-gray-300">JNV Sitapur</span>
-                </div>
-
-                <div className="flex flex-col sm:flex-row sm:items-center p-3 bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 text-sm w-full">
-                  <span className="font-semibold text-gray-200 sm:min-w-[120px] mb-1 sm:mb-0">Undergraduate:</span>
-                  <span className="text-gray-300">NIT Mizoram</span>
+                <div className="md:col-span-2 flex flex-col sm:flex-row p-3 bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 text-sm w-full">
+                  <span className="font-semibold text-gray-200 sm:min-w-[120px] mb-1 sm:mb-0 shrink-0">Area Of Interest:</span>
+                  <span className="text-gray-300 break-words flex-1">Passionate about building intelligent and scalable web applications by blending full-stack development with AI and database innovations.</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Social Links */}
         <div className="text-center mt-12 pt-8 border-t border-gray-700 opacity-0 animate-fadeIn">
           <p className="text-lg text-gray-300 mb-6">
             Let's connect and build something amazing together!
@@ -171,11 +146,9 @@ export default function About() {
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
               </svg>
             </a>
-            {/* ... other social icons ... */}
           </div>
         </div>
       </div>
-
       <style jsx>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(20px); }

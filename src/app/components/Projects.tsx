@@ -49,7 +49,7 @@ export default function Projects() {
     <section id="projects" className="relative min-h-screen py-20 px-4 md:px-8 lg:px-16 bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white -mt-16 overflow-hidden">
        <BackgroundBeams />
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-4xl font-bold text-center mb-16">Featured Projects</h2>
+        <h2 className="text-4xl font-bold text-center mb-16">Projects</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-20 px-4 md:px-8">
           {projects.map(project => (
             <ProjectCard key={project.id} project={project} />

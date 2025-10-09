@@ -25,7 +25,7 @@ export const TracingBeam = ({
     return (
         <motion.div ref={ref} className={cn("relative mx-auto h-full w-full", className)}>
             {/* Left vertical beam + dot */}
-            <div className="absolute -left-6 md:-left-20 top-0 flex flex-col items-center">
+            <div className="absolute -left-6 md:-left-20 top-0  hidden md:flex flex-col items-center">
                 {/* Dot */}
                 <motion.div 
                     animate={{

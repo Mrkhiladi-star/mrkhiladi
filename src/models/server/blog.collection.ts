@@ -37,6 +37,7 @@ export const blogCollection = {
       id: doc.$id,
       title: doc.title,
       excerpt: doc.excerpt,
+      content:doc.content,
       date: doc.date,
       readTime: doc.readTime,
       tags: doc.tags,
@@ -53,6 +54,7 @@ export const blogCollection = {
     return {
       id: doc.$id,
       title: doc.title,
+        excerpt: doc.excerpt,
       content: doc.content,
       date: doc.date, 
       readTime: doc.readTime,

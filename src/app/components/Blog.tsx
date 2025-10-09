@@ -45,7 +45,7 @@ export default function Blog() {
     try {
       const data = (await getBlogPosts())
       .reverse()
-      .slice(0, 50); 
+      .slice(0, 2); 
       setPosts(data || []);
     } catch (error) { 
       console.error('Error fetching blog posts:', error);

@@ -63,17 +63,11 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <header className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+            <span className="text-2xl text-gray-600 font-bold dark:text-gray-400">
               Welcome, {user?.name || user?.email}
             </span>
-            <ShimmerButton 
-              onClick={logout}
-              className="px-4 py-2 text-sm"
-            >
-              Logout
-            </ShimmerButton>
           </div>
         </div>
       </header>
