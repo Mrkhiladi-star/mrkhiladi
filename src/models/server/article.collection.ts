@@ -36,7 +36,9 @@ export default async function createArticleCollection() {
 export const articleCollection = {
   async getPublicArticles() {
     try {
-      const response = await databases.listDocuments(db, collectionId);
+       const response = await databases.listDocuments(db, collectionId, [
+              Query.orderDesc("date") 
+          ]);
       return response.documents.map(doc => ({
         id: doc.$id,
         title: doc.title,

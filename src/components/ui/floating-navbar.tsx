@@ -7,7 +7,6 @@ import { useAuthStore } from "@/store/Auth";
 import Image from "next/image";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
-
 export const FloatingNav = ({
   navItems,
   className,
@@ -18,21 +17,17 @@ export const FloatingNav = ({
   const [isVisible, setIsVisible] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const { session, logout } = useAuthStore();
   const router = useRouter();
-
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
   const handleMouseEnter = () => setIsVisible(true);
   const handleMouseLeave = () => {
     if (!isScrolled) setIsVisible(false);
   };
-
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -43,13 +38,10 @@ export const FloatingNav = ({
       document.body.style.overflow = "unset";
     };
   }, [mobileMenuOpen]);
-
-  // Wrapper for logout that also redirects
   const handleLogout = async () => {
     await logout();
-    router.push("/"); // Redirect to home page after logout
+    router.push("/"); 
   };
-
   return (
     <div
       className="fixed top-0 left-0 right-0 z-50 h-24"

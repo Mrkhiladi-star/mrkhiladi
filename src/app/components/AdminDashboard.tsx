@@ -2,10 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/Auth';
-import ShimmerButton from '@/components/magicui/shimmer-button';
 import  {Confetti} from '@/components/magicui/confetti'; 
 import AdminPanel from '@/components/ui/admin-panel';
-
 export default function AdminDashboard() {
   const { user, logout, isAdmin, isLoggedIn } = useAuthStore();
   const [activeTab, setActiveTab] = useState('intro');
@@ -32,7 +30,6 @@ export default function AdminDashboard() {
       router.push('/');
     }
   }, [isLoggedIn, isAdmin, router]);
-
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen flex items-center justify-center">

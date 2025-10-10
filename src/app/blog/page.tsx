@@ -5,7 +5,6 @@ import BlogPostDetail from '@/app/components/BlogPostDetails';
 import BlogList from '@/app/components/BlogList';
 import { ArrowLeft, Home } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
 interface BlogPostSummary {
   id: string;
   title: string;
@@ -16,7 +15,6 @@ interface BlogPostSummary {
   image: string | null;
   slug: string;
 }
-
 export default function BlogListLayout() {
   const [posts, setPosts] = useState<BlogPostSummary[]>([]);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
@@ -25,7 +23,6 @@ export default function BlogListLayout() {
   const [isMobile, setIsMobile] = useState(false);
   const [showList, setShowList] = useState(true);
   const router = useRouter();
-
   useEffect(() => {
     fetchData();
     checkMobile();
@@ -36,7 +33,6 @@ export default function BlogListLayout() {
   const checkMobile = () => {
     setIsMobile(window.innerWidth < 1024);
   };
-
   const fetchData = async () => {
     setLoading(true);
     setError(null);
@@ -53,27 +49,21 @@ export default function BlogListLayout() {
       setLoading(false);
     }
   };
-
   const handleSelectPost = (slug: string) => {
     setSelectedSlug(slug);
     if (isMobile) {
       setShowList(false);
     }
   };
-
   const handleBackToList = () => {
     setShowList(true);
   };
-
   const handleBackToHome = () => {
     router.push('/#blog');
   };
-
-  // Mobile view - show either list or detail
   if (isMobile) {
     return (
       <div className="min-h-screen bg-black text-white pt-16">
-        {/* Fixed Back to Home Button - Top Left Corner for Mobile */}
         <button 
           onClick={handleBackToHome}
           className="fixed top-20 left-4 z-50 flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-full shadow-lg transition-all duration-300"
@@ -84,7 +74,6 @@ export default function BlogListLayout() {
 
         <div className="max-w-7xl mx-auto">
           {showList ? (
-            // Mobile list view - ALL posts are visible
             <div className="p-4 pt-16">
               <h1 className="text-2xl font-bold text-teal-400 mb-6">All Blogs ({posts.length})</h1>
               {loading ? (
@@ -100,7 +89,6 @@ export default function BlogListLayout() {
               )}
             </div>
           ) : (
-            // Mobile detail view - when a post is selected
             <div className="p-4 pt-16">
               <button 
                 onClick={handleBackToList}
@@ -116,13 +104,10 @@ export default function BlogListLayout() {
       </div>
     );
   }
-
-  // Desktop view - split screen layout
   return (
     <div className="min-h-screen bg-black text-white pt-20">
       <div className="max-w-7xl mx-auto flex h-[calc(100vh-80px)]"> 
         <aside className="w-full lg:w-1/3 border-r border-gray-800 overflow-y-auto p-4 lg:p-6 custom-scrollbar">
-          {/* Header with Title and Button side by side */}
           <div className="flex items-center justify-between mb-6 border-b border-gray-800 pb-4">
             <h1 className="text-3xl font-bold text-teal-400">All Blogs ({posts.length})</h1>
             <button 
@@ -133,7 +118,6 @@ export default function BlogListLayout() {
               <span>Home</span>
             </button>
           </div>
-          
           {loading ? (
             <p className="text-gray-500">Loading posts...</p>
           ) : error ? (

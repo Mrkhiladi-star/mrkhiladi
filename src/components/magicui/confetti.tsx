@@ -1,6 +1,4 @@
-
 import confetti from "canvas-confetti";
-
 interface ConfettiOptions extends confetti.Options {
     particleCount?: number;
     angle?: number;
@@ -21,30 +19,24 @@ interface ConfettiOptions extends confetti.Options {
     canvas?: HTMLCanvasElement | null;
     scalar?: number;
 }
-
 const Confetti = (options: ConfettiOptions) => {
     if (options.disableForReducedMotion && window.matchMedia("(prefers-reduced-motion)").matches) {
         return;
     }
-
     const confettiInstance = options.canvas
         ? confetti.create(options.canvas, {
               resize: options.resize ?? true,
               useWorker: options.useWorker ?? true,
           })
         : confetti;
-
     confettiInstance({
         ...options,
     });
 };
-
 Confetti.shapeFromPath = (options: { path: string; [key: string]: any }) => {
     return confetti.shapeFromPath({ ...options });
 };
-
 Confetti.shapeFromText = (options: { text: string; [key: string]: any }) => {
     return confetti.shapeFromText({ ...options });
 };
-
  export {Confetti} ;

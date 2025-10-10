@@ -1,14 +1,10 @@
-// src/components/ui/admin-panel.tsx
-
 'use client';
-
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 
-//IMPORT the new data fetching server actions
 import { getAdminIntro } from '@/app/actions/get-admin-intro';
 import { getAdminSkills } from '@/app/actions/get-admin-skills';
 import { getAdminExperience } from '@/app/actions/get-admin-experience';
@@ -19,7 +15,6 @@ import { getAdminAbout } from '@/app/actions/get-admin-about';
 import { getAdminBlog } from '@/app/actions/get-admin-blog';
 import { getArticleData } from '@/app/actions/get-admin-articles';
 
-//IMPORT the new data mutation server actions
 import { updateIntroData } from '@/app/actions/update-intro-data';
 import { updateAboutData } from '@/app/actions/update-about-data';
 import { updateSkillsData } from '@/app/actions/update-skills-data';
@@ -30,7 +25,6 @@ import { updateProjectsData } from '@/app/actions/update-projects-data';
 import { updateBlogPostsData } from '@/app/actions/update-blog-posts-data';
 import { updateArticlesData } from '@/app/actions/update-articles-data';
 
-// Your existing interfaces for data types
 interface FormData {
   [key: string]: any;
 }
@@ -124,50 +118,47 @@ export default function AdminPanel({ activeTab }: { activeTab: string }) {
   const [arrayData, setArrayData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
-
   useEffect(() => {
     fetchData();
   }, [activeTab]);
-
   const fetchData = async () => {
     try {
       setIsLoading(true);
-
       switch (activeTab) {
         case 'intro':
-          const introData = await getAdminIntro(); // ✅ Use the new server action
+          const introData = await getAdminIntro(); 
           setFormData(introData || {});
           break;
         case 'skills':
-          const skillsData = await getAdminSkills(); // ✅ Use the new server action
+          const skillsData = await getAdminSkills(); 
           setArrayData(skillsData || []);
           break;
         case 'experience':
-          const expData = await getAdminExperience(); // ✅ Use the new server action
+          const expData = await getAdminExperience(); 
           setArrayData(expData || []);
           break;
         case 'education':
-          const eduData = await getAdminEducation(); // ✅ Use the new server action
+          const eduData = await getAdminEducation(); 
           setArrayData(eduData || []);
           break;
         case 'achievements':
-          const achData = await getAdminAchievements(); // ✅ Use the new server action
+          const achData = await getAdminAchievements(); 
           setArrayData(achData || []);
           break;
         case 'projects':
-          const projData = await getAdminProjects(); // ✅ Use the new server action
+          const projData = await getAdminProjects(); 
           setArrayData(projData || []);
           break;
         case 'about':
-          const aboutData = await getAdminAbout(); // ✅ Use the new server action
+          const aboutData = await getAdminAbout(); 
           setFormData(aboutData || {});
           break;
         case 'blog':
-          const blogData = await getAdminBlog(); // ✅ Use the new server action
+          const blogData = await getAdminBlog(); 
           setArrayData(blogData || []);
           break;
         case 'article':
-          const articleData = await getArticleData(); // ✅ Use the new server action
+          const articleData = await getArticleData(); 
           setArrayData(articleData || []); 
           break;
         default:
@@ -181,21 +172,17 @@ export default function AdminPanel({ activeTab }: { activeTab: string }) {
       setIsLoading(false);
     }
   };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev: FormData) => ({ ...prev, [name]: value }));
   };
-
   const handleArrayItemChange = (index: number, field: string, value: any) => {
     const newArray = [...arrayData];
     newArray[index] = { ...newArray[index], [field]: value };
     setArrayData(newArray);
   };
-
   const handleArrayChange = (index: number, field: string, value: any, subField?: string) => {
     const newArray = [...arrayData];
-
     if (subField) {
       newArray[index] = {
         ...newArray[index],
@@ -207,13 +194,10 @@ export default function AdminPanel({ activeTab }: { activeTab: string }) {
     } else {
       newArray[index] = { ...newArray[index], [field]: value };
     }
-
     setArrayData(newArray);
   };
-
   const addArrayItem = () => {
     let newItem: any = {};
-
     switch (activeTab) {
       case 'skills':
         newItem = { name: '', category: '', proficiency: 0 };
@@ -239,79 +223,61 @@ export default function AdminPanel({ activeTab }: { activeTab: string }) {
       default:
         newItem = {};
     }
-
     setArrayData(prev => [...prev, newItem]);
   };
-
   const removeArrayItem = (index: number) => {
     setArrayData(prev => prev.filter((_, i) => i !== index));
   };
-
   const handleStatsChange = (index: number, field: 'value' | 'label', value: string | number) => {
     const newStats = [...(formData.stats || [])];
     if (!newStats[index]) newStats[index] = { value: 0, label: '' };
-
     newStats[index][field] = field === 'value' ? Number(value) : value;
     setFormData({ ...formData, stats: newStats });
   };
-
   const addStat = () => {
     const newStats = [...(formData.stats || []), { value: 0, label: '' }];
     setFormData({ ...formData, stats: newStats });
   };
-
   const removeStat = (index: number) => {
     const newStats = formData.stats.filter((_: any, i: number) => i !== index);
     setFormData({ ...formData, stats: newStats });
   };
-
   const handlePersonalInfoChange = (index: number, field: 'label' | 'value', value: string) => {
     const newPersonalInfo = [...(formData.personalInfo || [])];
     if (!newPersonalInfo[index]) newPersonalInfo[index] = { label: '', value: '' };
-
     newPersonalInfo[index][field] = value;
     setFormData({ ...formData, personalInfo: newPersonalInfo });
   };
-
   const addPersonalInfo = () => {
     const newPersonalInfo = [...(formData.personalInfo || []), { label: '', value: '' }];
     setFormData({ ...formData, personalInfo: newPersonalInfo });
   };
-
   const removePersonalInfo = (index: number) => {
     const newPersonalInfo = formData.personalInfo.filter((_: any, i: number) => i !== index);
     setFormData({ ...formData, personalInfo: newPersonalInfo });
   };
-
   const handleStringArrayChange = (index: number, value: string, arrayName: string, itemIndex: number) => {
     const newArray = [...arrayData];
     if (!newArray[index][arrayName]) newArray[index][arrayName] = [];
-
     newArray[index][arrayName][itemIndex] = value;
     setArrayData(newArray);
   };
-
   const addStringArrayItem = (index: number, arrayName: string) => {
     const newArray = [...arrayData];
     if (!newArray[index][arrayName]) newArray[index][arrayName] = [];
-
     newArray[index][arrayName].push('');
     setArrayData(newArray);
   };
-
   const removeStringArrayItem = (index: number, arrayName: string, itemIndex: number) => {
     const newArray = [...arrayData];
     newArray[index][arrayName] = newArray[index][arrayName].filter((_: any, i: number) => i !== itemIndex);
     setArrayData(newArray);
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setMessage('');
-
     try {
-      // ✅ Use the new server actions for mutation
       let result;
       switch (activeTab) {
         case 'intro':
@@ -342,13 +308,11 @@ export default function AdminPanel({ activeTab }: { activeTab: string }) {
           result = await updateArticlesData(arrayData);
           break;
       }
-
       if (result?.success) {
         setMessage('Data updated successfully!');
       } else {
         setMessage(`Error updating data: ${result?.error || 'Unknown error'}`);
       }
-
     } catch (error: any) {
       console.error('Error updating data:', error);
       setMessage(`Error updating data: ${error.message}`);
@@ -356,11 +320,9 @@ export default function AdminPanel({ activeTab }: { activeTab: string }) {
       setIsLoading(false);
     }
   };
-
   if (isLoading) {
     return <div className="flex justify-center items-center h-64">Loading...</div>;
   }
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {activeTab === 'intro' && (

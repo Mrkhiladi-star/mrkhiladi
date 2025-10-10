@@ -1,7 +1,5 @@
-// src/components/ui/DotLoader.tsx
 import React from 'react';
-import { motion, Transition } from 'framer-motion'; // 🛑 Import Transition
-
+import { motion, Transition } from 'framer-motion';
 const loadingContainerVariants = {
   start: {
     transition: {
@@ -14,29 +12,21 @@ const loadingContainerVariants = {
     }
   }
 };
-
-// 🛑 FIX: Define the type for the transition object
 const loadingCircleTransition: Transition = {
   duration: 0.8,
   repeat: Infinity,
-  // Use the array form for 'easeInOut'
   ease: [0.42, 0, 0.58, 1], 
 };
-
 const loadingCircleVariants = {
   start: {
     y: "0%"
   },
   end: {
     y: "100%",
-    // When using the transition object inside variants, you can safely omit the ease here
-    // as it is defined in the shared constant.
     transition: loadingCircleTransition 
   }
 };
-
 const colors = ["#8B5CF6", "#EC4899", "#F59E0B", "#10B981", "#3B82F6"]; 
-
 export const DotLoader = () => {
   return (
     <div className="flex justify-center items-center h-full w-full">
@@ -54,7 +44,6 @@ export const DotLoader = () => {
             variants={loadingCircleVariants}
             transition={{ 
                 ...loadingCircleTransition, 
-                // 🛑 CRITICAL CHANGE: Use `loadingCircleTransition` and override `repeatDelay`
                 repeatDelay: 0.1 * (colors.length - 1 - index) 
             }} 
           />

@@ -9,3 +9,12 @@ export async function getArticleBySlug(slug: string) {
     return null;
   }
 }
+export async function getAllArticles() {
+  try {
+    const data = await articleCollection.getPublicArticles();
+    return data;
+  } catch (error) {
+    console.error('Error fetching all articles:', error);
+    return [];
+  }
+}

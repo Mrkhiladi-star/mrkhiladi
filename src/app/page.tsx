@@ -8,7 +8,7 @@ import Achievements from "@/app/components/Achievements";
 import Projects from "@/app/components/Projects";
 import About from "@/app/components/About";
 import Blog from "@/app/components/Blog";
-import Article from "@/app/components/Article";
+import ArticleHome from "@/app/components/ArticleHome"; 
 
 export default function HomePage() {
   const currentYear = new Date().getFullYear();
@@ -43,7 +43,7 @@ export default function HomePage() {
         <Blog />
       </section>
       <section id="articles" className="min-h-screen bg-black"> 
-        <Article />
+        <ArticleHome />
       </section>
       
       <footer className="bg-gray-900 border-t border-gray-800 py-6 sm:py-8">

@@ -1,4 +1,4 @@
-import { Permission } from "node-appwrite";
+import { ID, Permission, Query } from "node-appwrite";
 import { db, achievementsCollection as collectionId } from "../name";
 import { databases } from "./config";
 export default async function createAchievementsCollection() {
@@ -30,7 +30,9 @@ export default async function createAchievementsCollection() {
 }
 export const achievementsCollection = {
   async getPublicAchievements() {
-    const response = await databases.listDocuments(db, collectionId);
+   const response = await databases.listDocuments(db, collectionId, [
+              Query.orderDesc("date") 
+          ]);
     return response.documents.map(doc => ({
       id: doc.$id,
       title: doc.title,
@@ -41,13 +43,12 @@ export const achievementsCollection = {
     }));
   },
   async updateAchievements(achievements: any[]) {
-    // First, delete all existing achievements
     const existingAchievements = await databases.listDocuments(db, collectionId);
     await Promise.all(existingAchievements.documents.map(ach => 
       databases.deleteDocument(db, collectionId, ach.$id)
     ));
     return await Promise.all(achievements.map(ach =>
-      databases.createDocument(db, collectionId, 'unique()', {
+      databases.createDocument(db, collectionId, ID.unique(), {
         title: ach.title,
         organization: ach.organization,
         date: ach.date,

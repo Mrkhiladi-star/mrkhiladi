@@ -1,9 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { RetroGrid } from '@/components/magicui/retro-grid';
-import { getBlogPosts } from '@/app/actions/get-blog-data';
-interface BlogPost {
+import { BackgroundBeams } from '@/components/ui/background-beams';
+import { getAllArticles } from '@/app/actions/get-article-data';
+interface ArticleSummary {
   id: string;
   title: string;
   excerpt: string;
@@ -11,11 +11,11 @@ interface BlogPost {
   readTime: string;
   tags: string[];
   image: string | null;
-  slug: string;
+  slug: string; 
 }
-const BlogListItem = ({ post }: { post: BlogPost }) => (
+const ArticleListItem = ({ post }: { post: ArticleSummary }) => (
   <article className="flex gap-4 p-4 border-b border-gray-700/50 hover:bg-gray-800 transition-colors duration-200 cursor-pointer">
-    <Link href={`/blog/${post.slug}`} className="flex-shrink-0 w-24 h-24 overflow-hidden rounded-lg">
+    <Link href={`/articles/${post.slug}`} className="flex-shrink-0 w-24 h-24 overflow-hidden rounded-lg">
       <img
         src={post.image ?? '/placeholder-image.jpg'}
         alt={post.title}
@@ -24,9 +24,9 @@ const BlogListItem = ({ post }: { post: BlogPost }) => (
     </Link>
     <div className="flex-grow">
       <h3 className="text-xl font-bold text-teal-400 mb-1 leading-snug hover:underline">
-        <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+        <Link href={`/articles/${post.slug}`}>{post.title}</Link>
       </h3>
-      <p className="text-gray-400 text-sm mb-2 line-clamp-2">{post.excerpt}</p>
+      <p className="text-gray-400 text-sm mb-2 line-clamp-2">{post.excerpt ?? "A detailed look into this topic..."}</p> 
       <div className="flex items-center text-xs text-gray-500 gap-4">
         <span className="text-sm font-semibold">{post.tags[0] || 'Uncategorized'}</span>
         <span>{post.date}</span>
@@ -35,49 +35,43 @@ const BlogListItem = ({ post }: { post: BlogPost }) => (
     </div>
   </article>
 );
-export default function Blog() {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-
+export default function ArticleHome() {
+  const [articles, setArticles] = useState<ArticleSummary[]>([]);
   useEffect(() => {
     fetchData();
   }, []);
   const fetchData = async () => {
     try {
-      const data = (await getBlogPosts())
-      .slice(0, 2); 
-      setPosts(data || []);
-    } catch (error) { 
-      console.error('Error fetching blog posts:', error);
+      const data = (await getAllArticles())
+        .slice(0, 2);
+      setArticles(data || []);
+    } catch (error) {
+      console.error('Error fetching article posts for home:', error);
     }
   };
   return (
-    <section id="blog" className="relative pt-20 pb-20 bg-black text-white">
-      <RetroGrid 
-  className="absolute inset-0 z-0" 
-  lightLineColor="rgba(200,200,200,0.6)" 
-  darkLineColor="#14b8a6"                  
-  opacity={0.25}                       
-/> 
+    <section id="articles" className="relative pt-20 pb-20 bg-black text-white">
+     <BackgroundBeams className="absolute inset-0 z-0" />
       <div className="max-w-4xl mx-auto relative z-10 px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-teal-400 mb-2">My Stories</h2>
-          <p className="text-gray-400">A glimpse into my journey, thoughts, and learnings along the way.</p>
+          <h2 className="text-4xl font-extrabold text-teal-400 mb-2">My Articles</h2>
+          <p className="text-gray-400">Deep dives and comprehensive write-ups on various subjects.</p>
         </div>
         <div className="mt-8 space-y-4">
-          {posts.length > 0 ? (
-            posts.map(post => (
-              <BlogListItem key={post.id} post={post} />
+          {articles.length > 0 ? (
+            articles.map(article => (
+              <ArticleListItem key={article.id} post={article} />
             ))
           ) : (
-            <p className="text-center text-gray-500">No blog posts found.</p>
+            <p className="text-center text-gray-500">No recent articles found.</p>
           )}
         </div>
         <div className="text-center mt-12">
           <Link
-            href="/blog"
+            href="/articles" 
             className="px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors duration-300 font-medium"
           >
-            View All Posts
+            View All Articles
           </Link>
         </div>
       </div>

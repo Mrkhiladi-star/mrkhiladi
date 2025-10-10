@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/Auth';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import ShimmerButton from '@/components/magicui/shimmer-button';
+import {ShimmerButton} from '@/components/magicui/shimmer-button';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

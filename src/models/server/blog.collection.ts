@@ -1,4 +1,4 @@
-import { Permission, Query } from "node-appwrite";
+import { ID, Permission, Query } from "node-appwrite";
 import { db, blogCollection as collectionId } from "../name";
 import { databases } from "./config";
 export default async function createBlogCollection() {
@@ -32,7 +32,9 @@ export default async function createBlogCollection() {
 }
 export const blogCollection = {
   async getPublicPosts() {
-    const response = await databases.listDocuments(db, collectionId);
+     const response = await databases.listDocuments(db, collectionId, [
+        Query.orderDesc("date") 
+    ]);
     return response.documents.map(doc => ({
       id: doc.$id,
       title: doc.title,
@@ -69,7 +71,7 @@ export const blogCollection = {
       databases.deleteDocument(db, collectionId, post.$id)
     ));
     return await Promise.all(posts.map(post =>
-      databases.createDocument(db, collectionId, 'unique()', {
+      databases.createDocument(db, collectionId, ID.unique(), {
         title: post.title,
         excerpt: post.excerpt,
         content: post.content,

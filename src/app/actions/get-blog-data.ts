@@ -1,7 +1,5 @@
 'use server';
-
 import { blogCollection } from '@/models/server/blog.collection';
-
 export async function getBlogPosts() {
   try {
     const data = await blogCollection.getPublicPosts();

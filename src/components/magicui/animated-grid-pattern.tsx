@@ -1,9 +1,7 @@
 "use client";
-
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useEffect, useId, useRef, useState } from "react";
-
 interface GridPatternProps {
     width?: number;
     height?: number;
@@ -16,7 +14,6 @@ interface GridPatternProps {
     duration?: number;
     repeatDelay?: number;
 }
-
 export function GridPattern({
     width = 40,
     height = 40,
@@ -41,16 +38,12 @@ export function GridPattern({
             Math.floor((Math.random() * dimensions.height) / height),
         ];
     }
-
-    // Adjust the generateSquares function to return objects with an id, x, and y
     function generateSquares(count: number) {
         return Array.from({ length: count }, (_, i) => ({
             id: i,
             pos: getPos(),
         }));
     }
-
-    // Function to update a single square's position
     const updateSquarePosition = (id: number) => {
         setSquares(currentSquares =>
             currentSquares.map(sq =>
@@ -63,15 +56,11 @@ export function GridPattern({
             )
         );
     };
-
-    // Update squares to animate in
     useEffect(() => {
         if (dimensions.width && dimensions.height) {
             setSquares(generateSquares(numSquares));
         }
     }, [dimensions, numSquares]);
-
-    // Resize observer to update container dimensions
     useEffect(() => {
         const resizeObserver = new ResizeObserver(entries => {
             for (let entry of entries) {
@@ -81,11 +70,9 @@ export function GridPattern({
                 });
             }
         });
-
         if (containerRef.current) {
             resizeObserver.observe(containerRef.current);
         }
-
         return () => {
             if (containerRef.current) {
                 resizeObserver.unobserve(containerRef.current);
@@ -145,5 +132,4 @@ export function GridPattern({
         </svg>
     );
 }
-
 export default GridPattern;
