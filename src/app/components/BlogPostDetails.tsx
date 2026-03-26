@@ -57,11 +57,13 @@ export default function BlogPostDetail({ slug }: BlogPostDetailProps) {
         <span>Date: {post.date}</span>
         <span>Read: {post.readTime} </span>
       </div>
-      <img
-        src={post.image ?? '/placeholder-image.jpg'}
-        alt={post.title}
-        className="w-full h-auto max-h-96 object-cover rounded-xl mb-8 border border-gray-700"
-      />
+     {post.image && (
+  <img
+    src={post.image}
+    alt={post.title}
+    className="w-full h-auto max-h-96 object-cover rounded-xl mb-8 border border-gray-700"
+  />
+)}
       <div 
         className="prose prose-invert text-gray-300 max-w-none space-y-4"
         dangerouslySetInnerHTML={{ __html: post.content }} 

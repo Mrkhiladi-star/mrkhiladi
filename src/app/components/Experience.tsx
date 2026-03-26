@@ -4,16 +4,7 @@ import { TracingBeam } from '@/components/ui/tracing-beam';
 import { getExperienceData } from '@/app/actions/get-experience-data';
 import { Building2 } from 'lucide-react';
 import { BackgroundBeams } from '@/components/ui/background-beams';
-interface Experience {
-  id: string;
-  company: string;
-  position: string;
-  duration: string;
-  sessionTag: string;
-  description: string[]; 
-  technologies: string[];
-  logo?: string;
-}
+import type { Experience } from '@/interfaces';
 export default function Experience() {
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [cardHeights, setCardHeights] = useState<number[]>([]);

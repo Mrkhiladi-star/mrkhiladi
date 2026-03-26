@@ -8,7 +8,7 @@ import createExperienceCollection from "./experience.collection";
 import createEducationCollection from "./education.collection";
 import createAchievementsCollection from "./achievements.collection";
 import createBlogCollection from "./blog.collection";
-import createArticleCollection from "./article.collection";
+import {createArticleCollection} from "./article.collection";
 export default async function getOrCreateDB(){
   try {
     await databases.get(db)

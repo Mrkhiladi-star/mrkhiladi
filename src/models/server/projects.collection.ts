@@ -1,6 +1,8 @@
-import { Permission } from "node-appwrite";
+import { Permission, ID, Query } from "node-appwrite";
 import { db, projectCollection as collectionId } from "../name";
 import { databases } from "./config";
+import { getFileView } from "@/lib/appwrite";
+
 export default async function createProjectCollection() {
   try {
     await databases.createCollection(
@@ -14,7 +16,7 @@ export default async function createProjectCollection() {
         Permission.delete("users"),
       ]
     );
-    console.log("Project Collection Created");
+
     await Promise.all([
       databases.createStringAttribute(db, collectionId, "name", 100, true),
       databases.createStringAttribute(db, collectionId, "description", 2000, true),
@@ -23,38 +25,46 @@ export default async function createProjectCollection() {
       databases.createStringAttribute(db, collectionId, "link", 500, true),
       databases.createStringAttribute(db, collectionId, "github", 500, false),
     ]);
-    console.log("Project Attributes Created");
+
   } catch (error) {
-    console.error("Error creating project collection or attributes:", error);
+    console.error("Error creating project collection:", error);
   }
 }
+
 export const projectsCollection = {
+
+  // ✅ GET (latest first)
   async getPublicProjects() {
-    const response = await databases.listDocuments(db, collectionId);
+    const response = await databases.listDocuments(db, collectionId, [
+      Query.orderDesc("$createdAt")   // 🔥 NEW
+    ]);
+
     return response.documents.map(doc => ({
       id: doc.$id,
       name: doc.name,
       description: doc.description,
       tags: doc.tags,
-      image: doc.imageId ,
+      image: getFileView(doc.imageId),
+      imageId: doc.imageId,
       link: doc.link,
       github: doc.github,
     }));
   },
-  async updateProjects(projects: any[]) {
-    const existingProjects = await databases.listDocuments(db, collectionId);
-    await Promise.all(existingProjects.documents.map(proj => 
-      databases.deleteDocument(db, collectionId, proj.$id)
-    ));
-    return await Promise.all(projects.map(proj =>
-      databases.createDocument(db, collectionId, 'unique()', {
-        name: proj.name,
-        description: proj.description,
-        tags: proj.tags,
-        imageId: proj.imageId,
-        link: proj.link,
-        github: proj.github,
-      })
-    ));
+
+  // ✅ CREATE (single project)
+  async createProject(project: any) {
+    return await databases.createDocument(db, collectionId, ID.unique(), {
+      name: project.name,
+      description: project.description,
+      tags: project.tags || [],
+      imageId: project.imageId,
+      link: project.link,
+      github: project.github || "",
+    });
   },
+
+  // ✅ DELETE (optional future use)
+  async deleteProject(id: string) {
+    return await databases.deleteDocument(db, collectionId, id);
+  }
 };

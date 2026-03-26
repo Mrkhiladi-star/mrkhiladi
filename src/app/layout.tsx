@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
+
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -12,7 +14,10 @@ const geistMono = Geist_Mono({
 });
 export const metadata: Metadata = {
   title: "Ramu Yadav",
-  description: "Personal portfolio website",
+  description: "Portfolio",
+  verification: {
+    google: "xrSmRelqXFUPLW2xjbl7MZppyMaIRuG7F8g8DmhYZHc",
+  },
 };
 export default function RootLayout({
   children,

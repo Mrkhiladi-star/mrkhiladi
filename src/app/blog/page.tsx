@@ -15,7 +15,7 @@ interface BlogPostSummary {
   image: string | null;
   slug: string;
 }
-export default function BlogListLayout() {
+export default function BlogListLayout({ initialSlug }: { initialSlug?: string }) {
   const [posts, setPosts] = useState<BlogPostSummary[]>([]);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -23,12 +23,13 @@ export default function BlogListLayout() {
   const [isMobile, setIsMobile] = useState(false);
   const [showList, setShowList] = useState(true);
   const router = useRouter();
-  useEffect(() => {
-    fetchData();
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+ useEffect(() => {
+  fetchData();
+  checkMobile();
+
+  window.addEventListener('resize', checkMobile);
+  return () => window.removeEventListener('resize', checkMobile);
+}, [initialSlug]);
 
   const checkMobile = () => {
     setIsMobile(window.innerWidth < 1024);
@@ -39,9 +40,19 @@ export default function BlogListLayout() {
     try {
       const data = await getBlogPosts();
       setPosts(data || []);
-      if (data && data.length > 0 && !isMobile) {
-        setSelectedSlug(data[0].slug);
-      }
+     if (data && data.length > 0) {
+  if (initialSlug) {
+    setSelectedSlug(initialSlug);
+
+    // ✅ mobile pe directly detail open
+    if (window.innerWidth < 1024) {
+      setShowList(false);
+    }
+
+  } else if (!isMobile) {
+    setSelectedSlug(data[0].slug);
+  }
+}
     } catch (e) {
       console.error('Error fetching blog posts:', e);
       setError('Failed to load blog posts.');

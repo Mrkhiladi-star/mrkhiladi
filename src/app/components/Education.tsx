@@ -2,18 +2,7 @@
 import { useEffect, useState } from 'react';
 import { getEducationData } from '@/app/actions/get-education-data';
 import { BackgroundBeams } from '@/components/ui/background-beams';
-interface Education {
-  id: string;
-  institution: string;
-  degree: string;
-  field: string;
-  duration: string;
-  grade: string;
-  description: string;
-  location: string;
-  image: string;
-  level: number
-}
+import type { Education } from '@/interfaces';
 export default function Education() {
   const [education, setEducation] = useState<Education[]>([]);
   useEffect(() => {
@@ -22,7 +11,7 @@ export default function Education() {
   const fetchData = async () => {
     try {
       const data = await getEducationData();
-      setEducation(data as Education[]);
+      setEducation(data || []);
     } catch (error) {
       console.error('Error fetching education:', error); 
     }
@@ -48,7 +37,7 @@ export default function Education() {
             >
               <div
                 className="h-48 md:h-64 bg-cover bg-center relative"
-                style={{ backgroundImage: `url(${edu.image})` }}
+                style={{ backgroundImage: `url(${edu.image || "/placeholder-image.jpg"})` }}
               >
                 <div className="absolute inset-0 bg-black opacity-40"></div>
                 <div className="absolute inset-0 p-6 flex flex-col justify-end text-white">

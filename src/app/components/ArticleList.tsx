@@ -5,7 +5,7 @@ interface ArticleSummary {
   date: string;
   readTime: string;
   tags: string[];
-  image: string | null;
+  image: string|null;
   slug: string;
 }
 interface ArticleListProps {

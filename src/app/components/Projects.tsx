@@ -72,12 +72,14 @@ function ProjectCard({ project }: { project: ProjectWithImageUrl }) {
     : [];
 
   return (
-    <div className="bg-gray-900/80 backdrop-blur-md dark:bg-gray-800/80 rounded-2xl shadow-lg overflow-hidden border border-gray-700 hover:shadow-2xl hover:scale-[1.02] transition-transform duration-300 group">
+   <div className={`bg-gray-900/80 backdrop-blur-md dark:bg-gray-800/80 rounded-2xl shadow-lg overflow-hidden border border-gray-700 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 group 
+  ${expanded ? "h-auto" : "h-[420px] flex flex-col"}
+`}>
       <div className="relative overflow-hidden">
         <img 
           src={project.imageUrl} 
           alt={project.name} 
-          className="w-full object-contain bg-black transition-transform duration-500 group-hover:scale-105"
+          className="w-full  object-contain bg-black transition-transform duration-500 group-hover:scale-105"
           onError={(e) => { e.currentTarget.src = '/placeholder-image.jpg'; }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />

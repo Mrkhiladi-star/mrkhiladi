@@ -4,120 +4,101 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-
 import { getAdminIntro } from '@/app/actions/get-admin-intro';
-import { getAdminSkills } from '@/app/actions/get-admin-skills';
-import { getAdminExperience } from '@/app/actions/get-admin-experience';
-import { getAdminEducation } from '@/app/actions/get-admin-education';
-import { getAdminAchievements } from '@/app/actions/get-admin-achievements';
-import { getAdminProjects } from '@/app/actions/get-admin-projects';
 import { getAdminAbout } from '@/app/actions/get-admin-about';
-import { getAdminBlog } from '@/app/actions/get-admin-blog';
-import { getArticleData } from '@/app/actions/get-admin-articles';
-
 import { updateIntroData } from '@/app/actions/update-intro-data';
 import { updateAboutData } from '@/app/actions/update-about-data';
-import { updateSkillsData } from '@/app/actions/update-skills-data';
-import { updateExperiencesData } from '@/app/actions/update-experiences-data';
-import { updateEducationData } from '@/app/actions/update-education-data';
-import { updateAchievementsData } from '@/app/actions/update-achievements-data';
-import { updateProjectsData } from '@/app/actions/update-projects-data';
-import { updateBlogPostsData } from '@/app/actions/update-blog-posts-data';
-import { updateArticlesData } from '@/app/actions/update-articles-data';
+import { createProjectAction } from "@/app/actions/create-project";
+import { getFileView, uploadFile } from "@/lib/appwrite";   // top pe add karo
+import { createAchievementAction } from '@/app/actions/create-achievement';
+import { createArticleAction } from '@/app/actions/create-article';
+import { createExperienceAction } from '@/app/actions/create-experience';
+import { createSkillAction } from '@/app/actions/create-skill';
+import { createBlogAction } from '@/app/actions/create-blog';
+import { createEducationAction } from '@/app/actions/create-education';
 
 interface FormData {
   [key: string]: any;
 }
-interface Skill {
-  id?: string;
-  name: string;
-  proficiency: number;
-  category: string;
-  icon?: string;
-}
-
-interface Project {
-  id?: string;
-  name: string;
-  description: string;
-  tags: string[];
-  image: string;
-  link: string;
-  github?: string;
-}
-
-interface IntroData {
-  name: string;
-  title: string;
-  description: string;
-  stats: { value: number; label: string }[];
-}
-
-interface Experience {
-  id?: string;
-  company: string;
-  position: string;
-  duration: string;
-  description: string[];
-  technologies: string[];
-}
-
-interface Education {
-  id?: string;
-  institution: string;
-  degree: string;
-  field: string;
-  duration: string;
-  grade: string;
-  description: string;
-}
-
-interface BlogPost {
-  id?: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  date: string;
-  readTime: string;
-  tags: string[];
-  image: string;
-  slug: string;
-}
-
-interface Achievement {
-  id?: string;
-  title: string;
-  organization: string;
-  date: string;
-  description: string;
-  link?: string;
-}
-
-interface Article {
-  id?: string;
-  title: string;
-  content: string;
-  date: string;
-  readTime: string;
-  tags: string[];
-  image: string;
-  slug: string;
-}
-
-interface AboutData {
-  bio: string;
-  image: string;
-  personalInfo: {
-    label: string;
-    value: string;
-  }[];
-}
 
 export default function AdminPanel({ activeTab }: { activeTab: string }) {
   const [formData, setFormData] = useState<any>({});
-  const [arrayData, setArrayData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [project, setProject] = useState({
+    name: "",
+    description: "",
+    tags: [] as string[],
+    imageId: "",
+    link: "",
+    github: "",
+  });
+
+  const [achievement, setAchievement] = useState({
+    title: "",
+    organization: "",
+    date: "",
+    description: "",
+    link: "",
+    imageId: "",
+  });
+
+  const [article, setArticle] = useState({
+    title: "",
+    content: "",
+    date: "",
+    readTime: "",
+    tags: [] as string[],
+    imageId: "",
+    slug: "",
+  });
+
+  const [blog, setBlog] = useState({
+    title: "",
+    excerpt: "",
+    content: "",
+    date: "",
+    readTime: "",
+    tags: [] as string[],
+    imageId: "",
+    slug: "",
+    author: "",
+  });
+
+  const [education, setEducation] = useState({
+    institution: "",
+    degree: "",
+    field: "",
+    duration: "",
+    grade: "",
+    description: "",
+    location: "",
+    imageId: "",
+    
+  });
+
+
+  const [experience, setExperience] = useState({
+    company: "",
+    position: "",
+    duration: "",
+    sessionTag: "",
+    description: [] as string[],
+    technologies: [] as string[],
+    logoId: "",
+    
+  });
+
+  const [skill, setSkill] = useState({
+    name: "",
+    category: "",
+    proficiency: 0,
+    iconId: "",
+  });
+
+
+
+
   useEffect(() => {
     fetchData();
   }, [activeTab]);
@@ -126,44 +107,15 @@ export default function AdminPanel({ activeTab }: { activeTab: string }) {
       setIsLoading(true);
       switch (activeTab) {
         case 'intro':
-          const introData = await getAdminIntro(); 
+          const introData = await getAdminIntro();
           setFormData(introData || {});
           break;
-        case 'skills':
-          const skillsData = await getAdminSkills(); 
-          setArrayData(skillsData || []);
-          break;
-        case 'experience':
-          const expData = await getAdminExperience(); 
-          setArrayData(expData || []);
-          break;
-        case 'education':
-          const eduData = await getAdminEducation(); 
-          setArrayData(eduData || []);
-          break;
-        case 'achievements':
-          const achData = await getAdminAchievements(); 
-          setArrayData(achData || []);
-          break;
-        case 'projects':
-          const projData = await getAdminProjects(); 
-          setArrayData(projData || []);
-          break;
         case 'about':
-          const aboutData = await getAdminAbout(); 
+          const aboutData = await getAdminAbout();
           setFormData(aboutData || {});
-          break;
-        case 'blog':
-          const blogData = await getAdminBlog(); 
-          setArrayData(blogData || []);
-          break;
-        case 'article':
-          const articleData = await getArticleData(); 
-          setArrayData(articleData || []); 
           break;
         default:
           setFormData({});
-          setArrayData([]);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -175,72 +127,6 @@ export default function AdminPanel({ activeTab }: { activeTab: string }) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev: FormData) => ({ ...prev, [name]: value }));
-  };
-  const handleArrayItemChange = (index: number, field: string, value: any) => {
-    const newArray = [...arrayData];
-    newArray[index] = { ...newArray[index], [field]: value };
-    setArrayData(newArray);
-  };
-  const handleArrayChange = (index: number, field: string, value: any, subField?: string) => {
-    const newArray = [...arrayData];
-    if (subField) {
-      newArray[index] = {
-        ...newArray[index],
-        [field]: {
-          ...newArray[index][field],
-          [subField]: value
-        }
-      };
-    } else {
-      newArray[index] = { ...newArray[index], [field]: value };
-    }
-    setArrayData(newArray);
-  };
-  const addArrayItem = () => {
-    let newItem: any = {};
-    switch (activeTab) {
-      case 'skills':
-        newItem = { name: '', category: '', proficiency: 0 };
-        break;
-      case 'experience':
-        newItem = { company: '', position: '', duration: '', description: [], technologies: [] };
-        break;
-      case 'education':
-        newItem = { institution: '', degree: '', field: '', duration: '', grade: '', description: '' };
-        break;
-      case 'achievements':
-        newItem = { title: '', organization: '', date: '', description: '', link: '' };
-        break;
-      case 'projects':
-        newItem = { name: '', description: '', tags: [], image: '', link: '', github: '' };
-        break;
-      case 'blog':
-        newItem = { title: '', excerpt: '', content: '', date: '', readTime: '', tags: [], image: '', slug: '' };
-        break;
-      case 'article':
-        newItem = { title: '', content: '', date: '', readTime: '', tags: [], image: '', slug: '' };
-        break;
-      default:
-        newItem = {};
-    }
-    setArrayData(prev => [...prev, newItem]);
-  };
-  const removeArrayItem = (index: number) => {
-    setArrayData(prev => prev.filter((_, i) => i !== index));
-  };
-  const handleStatsChange = (index: number, field: 'value' | 'label', value: string | number) => {
-    const newStats = [...(formData.stats || [])];
-    if (!newStats[index]) newStats[index] = { value: 0, label: '' };
-    newStats[index][field] = field === 'value' ? Number(value) : value;
-    setFormData({ ...formData, stats: newStats });
-  };
-  const addStat = () => {
-    const newStats = [...(formData.stats || []), { value: 0, label: '' }];
-    setFormData({ ...formData, stats: newStats });
-  };
-  const removeStat = (index: number) => {
-    const newStats = formData.stats.filter((_: any, i: number) => i !== index);
-    setFormData({ ...formData, stats: newStats });
   };
   const handlePersonalInfoChange = (index: number, field: 'label' | 'value', value: string) => {
     const newPersonalInfo = [...(formData.personalInfo || [])];
@@ -256,23 +142,6 @@ export default function AdminPanel({ activeTab }: { activeTab: string }) {
     const newPersonalInfo = formData.personalInfo.filter((_: any, i: number) => i !== index);
     setFormData({ ...formData, personalInfo: newPersonalInfo });
   };
-  const handleStringArrayChange = (index: number, value: string, arrayName: string, itemIndex: number) => {
-    const newArray = [...arrayData];
-    if (!newArray[index][arrayName]) newArray[index][arrayName] = [];
-    newArray[index][arrayName][itemIndex] = value;
-    setArrayData(newArray);
-  };
-  const addStringArrayItem = (index: number, arrayName: string) => {
-    const newArray = [...arrayData];
-    if (!newArray[index][arrayName]) newArray[index][arrayName] = [];
-    newArray[index][arrayName].push('');
-    setArrayData(newArray);
-  };
-  const removeStringArrayItem = (index: number, arrayName: string, itemIndex: number) => {
-    const newArray = [...arrayData];
-    newArray[index][arrayName] = newArray[index][arrayName].filter((_: any, i: number) => i !== itemIndex);
-    setArrayData(newArray);
-  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -283,29 +152,8 @@ export default function AdminPanel({ activeTab }: { activeTab: string }) {
         case 'intro':
           result = await updateIntroData(formData);
           break;
-        case 'skills':
-          result = await updateSkillsData(arrayData);
-          break;
-        case 'experience':
-          result = await updateExperiencesData(arrayData);
-          break;
-        case 'education':
-          result = await updateEducationData(arrayData);
-          break;
-        case 'achievements':
-          result = await updateAchievementsData(arrayData);
-          break;
-        case 'projects':
-          result = await updateProjectsData(arrayData);
-          break;
         case 'about':
           result = await updateAboutData(formData);
-          break;
-        case 'blog':
-          result = await updateBlogPostsData(arrayData);
-          break;
-        case 'article':
-          result = await updateArticlesData(arrayData);
           break;
       }
       if (result?.success) {
@@ -384,570 +232,680 @@ export default function AdminPanel({ activeTab }: { activeTab: string }) {
       )}
 
 
-
-
       {activeTab === 'article' && (
-        <div className="space-y-4">
-          <Button type="button" onClick={addArrayItem} variant="outline">
+        <div className="space-y-6">
+
+          <Input
+            placeholder="Title"
+            value={article.title}
+            onChange={(e) => {
+              const title = e.target.value;
+
+              setArticle({
+                ...article,
+                title,
+                slug: title.toLowerCase().replace(/\s+/g, "-") // ✅ auto slug
+              });
+            }}
+          />
+
+          <Input
+            placeholder="Slug"
+            value={article.slug}
+            onChange={(e) => setArticle({ ...article, slug: e.target.value })}
+          />
+
+          <Input
+            placeholder="Date"
+            value={article.date}
+            onChange={(e) => setArticle({ ...article, date: e.target.value })}
+          />
+
+          <Input
+            placeholder="Read Time"
+            value={article.readTime}
+            onChange={(e) => setArticle({ ...article, readTime: e.target.value })}
+          />
+
+          {/* IMAGE UPLOAD */}
+          <label className="flex flex-col items-center justify-center h-44 border-2 border-dashed rounded-xl cursor-pointer overflow-hidden">
+
+            {article.imageId ? (
+              <img
+                src={getFileView(article.imageId) || "/placeholder-image.jpg"}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <p>Upload Article Image</p>
+            )}
+
+            <input
+              type="file"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+
+                const res = await uploadFile(file);
+
+                setArticle(prev => ({
+                  ...prev,
+                  imageId: res.$id
+                }));
+              }}
+            />
+          </label>
+
+          <Textarea
+            placeholder="Content (HTML supported)"
+            value={article.content}
+            onChange={(e) => setArticle({ ...article, content: e.target.value })}
+            rows={6}
+          />
+
+          {/* TAGS */}
+          {article.tags.map((tag, i) => (
+            <Input
+              key={i}
+              value={tag}
+              onChange={(e) => {
+                const t = [...article.tags];
+                t[i] = e.target.value;
+                setArticle({ ...article, tags: t });
+              }}
+            />
+          ))}
+
+          {/* ✅ FIX: prevent form submit */}
+          <Button
+            type="button"
+            onClick={() =>
+              setArticle({ ...article, tags: [...article.tags, ""] })
+            }
+          >
+            Add Tag
+          </Button>
+
+          {/* ✅ FIX: prevent form submit */}
+          <Button
+            type="button"
+            onClick={async () => {
+              const res = await createArticleAction(article);
+
+              if (res.success) {
+                alert("Article Added ✅");
+
+                // ✅ reset form
+                setArticle({
+                  title: "",
+                  content: "",
+                  date: "",
+                  readTime: "",
+                  tags: [],
+                  imageId: "",
+                  slug: "",
+                });
+              }
+            }}
+          >
             Add Article
           </Button>
 
-          {arrayData.map((article, index) => (
-            <div key={index} className="border p-4 rounded-md space-y-3">
-              <div className="flex justify-between items-center">
-                <h4 className="font-medium">Article #{index + 1}</h4>
-                <Button
-                  type="button"
-                  onClick={() => removeArrayItem(index)}
-                  variant="destructive"
-                  size="sm"
-                >
-                  Remove
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor={`article-title-${index}`}>Title</Label>
-                  <Input
-                    id={`article-title-${index}`}
-                    value={article.title || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'title', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`article-slug-${index}`}>Slug</Label>
-                  <Input
-                    id={`article-slug-${index}`}
-                    value={article.slug || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'slug', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`article-date-${index}`}>Date</Label>
-                  <Input
-                    id={`article-date-${index}`}
-                    value={article.date || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'date', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`article-readTime-${index}`}>Read Time</Label>
-                  <Input
-                    id={`article-readTime-${index}`}
-                    value={article.readTime || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'readTime', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`article-image-${index}`}>Image URL</Label>
-                  <Input
-                    id={`article-image-${index}`}
-                    value={article.image || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'image', e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor={`article-content-${index}`}>Content</Label>
-                <Textarea
-                  id={`article-content-${index}`}
-                  value={article.content || ''}
-                  onChange={(e) => handleArrayItemChange(index, 'content', e.target.value)}
-                  rows={6}
-                />
-              </div>
-
-              <div>
-                <Label>Tags</Label>
-                {article.tags?.map((tag: string, tagIndex: number) => (
-                  <div key={tagIndex} className="flex gap-2 mb-2">
-                    <Input
-                      value={tag || ''}
-                      onChange={(e) => handleStringArrayChange(index, e.target.value, 'tags', tagIndex)}
-                    />
-                    <Button
-                      type="button"
-                      onClick={() => removeStringArrayItem(index, 'tags', tagIndex)}
-                      variant="destructive"
-                      size="sm"
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  type="button"
-                  onClick={() => addStringArrayItem(index, 'tags')}
-                  variant="outline"
-                  size="sm"
-                >
-                  Add Tag
-                </Button>
-              </div>
-            </div>
-          ))}
         </div>
       )}
 
       {/* Skills Tab */}
       {activeTab === 'skills' && (
-        <div className="space-y-4">
-          <Button type="button" onClick={addArrayItem} variant="outline">
+        <div className="space-y-6">
+
+          <Input
+            placeholder="Skill Name"
+            value={skill.name}
+            onChange={(e) => setSkill({ ...skill, name: e.target.value })}
+          />
+
+          <Input
+            placeholder="Category (Frontend / Backend)"
+            value={skill.category}
+            onChange={(e) => setSkill({ ...skill, category: e.target.value })}
+          />
+
+          <div className="space-y-1">
+            <Label>Proficiency (0-100)</Label>
+            <Input
+              type="number"
+              value={skill.proficiency}
+              onChange={(e) =>
+                setSkill({ ...skill, proficiency: Number(e.target.value) })
+              }
+            />
+          </div>
+
+
+
+          {/* ICON UPLOAD */}
+          <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed rounded-xl cursor-pointer overflow-hidden">
+
+            {skill.iconId ? (
+              <img
+                src={getFileView(skill.iconId)}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <p>Upload Skill Icon</p>
+            )}
+
+            <input
+              type="file"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+
+                const res = await uploadFile(file);
+
+                setSkill(prev => ({
+                  ...prev,
+                  iconId: res.$id
+                }));
+              }}
+            />
+          </label>
+
+          <Button
+            type="button"
+            onClick={async () => {
+              const res = await createSkillAction(skill);
+
+              if (res.success) {
+                alert("Skill Added ✅");
+
+                setSkill({
+                  name: "",
+                  category: "",
+                  proficiency: 0,
+                  iconId: "",
+              
+                });
+              }
+            }}
+          >
             Add Skill
           </Button>
 
-          {arrayData.map((skill, index) => (
-            <div key={index} className="border p-4 rounded-md space-y-3">
-              <div className="flex justify-between items-center">
-                <h4 className="font-medium">Skill #{index + 1}</h4>
-                <Button
-                  type="button"
-                  onClick={() => removeArrayItem(index)}
-                  variant="destructive"
-                  size="sm"
-                >
-                  Remove
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor={`skill-name-${index}`}>Name</Label>
-                  <Input
-                    id={`skill-name-${index}`}
-                    value={skill.name || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'name', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`skill-category-${index}`}>Category</Label>
-                  <Input
-                    id={`skill-category-${index}`}
-                    value={skill.category || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'category', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`skill-proficiency-${index}`}>Proficiency (0-100)</Label>
-                  <Input
-                    id={`skill-proficiency-${index}`}
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={skill.proficiency || 0}
-                    onChange={(e) => handleArrayItemChange(index, 'proficiency', parseInt(e.target.value))}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`skill-icon-${index}`}>Icon (URL)</Label>
-                  <Input
-                    id={`skill-icon-${index}`}
-                    value={skill.icon || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'icon', e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
         </div>
       )}
-
       {/* Experience Tab */}
       {activeTab === 'experience' && (
-        <div className="space-y-4">
-          <Button type="button" onClick={addArrayItem} variant="outline">
+        <div className="space-y-6">
+
+          <Input
+            placeholder="Company"
+            value={experience.company}
+            onChange={(e) => setExperience({ ...experience, company: e.target.value })}
+          />
+
+          <Input
+            placeholder="Position"
+            value={experience.position}
+            onChange={(e) => setExperience({ ...experience, position: e.target.value })}
+          />
+
+          <Input
+            placeholder="Duration"
+            value={experience.duration}
+            onChange={(e) => setExperience({ ...experience, duration: e.target.value })}
+          />
+
+          <Input
+            placeholder="Session Tag"
+            value={experience.sessionTag}
+            onChange={(e) => setExperience({ ...experience, sessionTag: e.target.value })}
+          />
+          {/* LOGO UPLOAD */}
+          <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed rounded-xl cursor-pointer overflow-hidden">
+
+            {experience.logoId ? (
+              <img
+                src={getFileView(experience.logoId)}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <p>Upload Company Logo</p>
+            )}
+
+            <input
+              type="file"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+
+                const res = await uploadFile(file);
+
+                setExperience(prev => ({
+                  ...prev,
+                  logoId: res.$id
+                }));
+              }}
+            />
+          </label>
+
+          {/* DESCRIPTION */}
+          {experience.description.map((desc, i) => (
+            <Input
+              key={i}
+              value={desc}
+              onChange={(e) => {
+                const arr = [...experience.description];
+                arr[i] = e.target.value;
+                setExperience({ ...experience, description: arr });
+              }}
+            />
+          ))}
+
+          <Button
+            type="button"
+            onClick={() =>
+              setExperience({ ...experience, description: [...experience.description, ""] })
+            }
+          >
+            Add Description
+          </Button>
+
+          {/* TECHNOLOGIES */}
+          {experience.technologies.map((tech, i) => (
+            <Input
+              key={i}
+              value={tech}
+              onChange={(e) => {
+                const arr = [...experience.technologies];
+                arr[i] = e.target.value;
+                setExperience({ ...experience, technologies: arr });
+              }}
+            />
+          ))}
+
+          <Button
+            type="button"
+            onClick={() =>
+              setExperience({ ...experience, technologies: [...experience.technologies, ""] })
+            }
+          >
+            Add Tech
+          </Button>
+
+          <Button
+            type="button"
+            onClick={async () => {
+              const res = await createExperienceAction(experience);
+
+              if (res.success) {
+                alert("Experience Added ✅");
+
+                setExperience({
+                  company: "",
+                  position: "",
+                  duration: "",
+                  sessionTag: "",
+                  description: [],
+                  technologies: [],
+                  logoId: "",
+                  
+                });
+              }
+            }}
+          >
             Add Experience
           </Button>
 
-          {arrayData.map((exp, index) => (
-            <div key={index} className="border p-4 rounded-md space-y-3">
-              <div className="flex justify-between items-center">
-                <h4 className="font-medium">Experience #{index + 1}</h4>
-                <Button
-                  type="button"
-                  onClick={() => removeArrayItem(index)}
-                  variant="destructive"
-                  size="sm"
-                >
-                  Remove
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor={`exp-company-${index}`}>Company</Label>
-                  <Input
-                    id={`exp-company-${index}`}
-                    value={exp.company || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'company', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`exp-position-${index}`}>Position</Label>
-                  <Input
-                    id={`exp-position-${index}`}
-                    value={exp.position || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'position', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`exp-duration-${index}`}>Duration</Label>
-                  <Input
-                    id={`exp-duration-${index}`}
-                    value={exp.duration || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'duration', e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor={`exp-sessiontag-${index}`}>Session Tag (e.g., Spring 2024-25 Session)</Label>
-                  <Input
-                    id={`exp-sessiontag-${index}`}
-                    value={exp.sessionTag || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'sessionTag', e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label>Description</Label>
-                {exp.description?.map((desc: string, descIndex: number) => (
-                  <div key={descIndex} className="flex gap-2 mb-2">
-                    <Input
-                      value={desc || ''}
-                      onChange={(e) => handleStringArrayChange(index, e.target.value, 'description', descIndex)}
-                    />
-                    <Button
-                      type="button"
-                      onClick={() => removeStringArrayItem(index, 'description', descIndex)}
-                      variant="destructive"
-                      size="sm"
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  type="button"
-                  onClick={() => addStringArrayItem(index, 'description')}
-                  variant="outline"
-                  size="sm"
-                >
-                  Add Description Point
-                </Button>
-              </div>
-              <div>
-                  <Label htmlFor={`edu-image-${index}`}>Background Image URL</Label>
-                  <Input
-                    id={`edu-image-${index}`}
-                    value={exp.logo || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'logo', e.target.value)}
-                  />
-                </div>
-
-              <div>
-                <Label>Technologies</Label>
-                {exp.technologies?.map((tech: string, techIndex: number) => (
-                  <div key={techIndex} className="flex gap-2 mb-2">
-                    <Input
-                      value={tech || ''}
-                      onChange={(e) => handleStringArrayChange(index, e.target.value, 'technologies', techIndex)}
-                    />
-                    <Button
-                      type="button"
-                      onClick={() => removeStringArrayItem(index, 'technologies', techIndex)}
-                      variant="destructive"
-                      size="sm"
-                    >
-                      Remove
-                    </Button>
-                  </div>
-
-                  
-                ))}
-                <Button
-                  type="button"
-                  onClick={() => addStringArrayItem(index, 'technologies')}
-                  variant="outline"
-                  size="sm"
-                >
-                  Add Technology
-                </Button>
-              </div>
-            </div>
-          ))}
         </div>
       )}
 
       {/* Education Tab */}
       {activeTab === 'education' && (
-        <div className="space-y-4">
-          <Button type="button" onClick={addArrayItem} variant="outline">
+        <div className="space-y-6">
+
+          <Input
+            placeholder="Institution"
+            value={education.institution}
+            onChange={(e) => setEducation({ ...education, institution: e.target.value })}
+          />
+
+          <Input
+            placeholder="Degree"
+            value={education.degree}
+            onChange={(e) => setEducation({ ...education, degree: e.target.value })}
+          />
+
+          <Input
+            placeholder="Field"
+            value={education.field}
+            onChange={(e) => setEducation({ ...education, field: e.target.value })}
+          />
+
+          <Input
+            placeholder="Duration"
+            value={education.duration}
+            onChange={(e) => setEducation({ ...education, duration: e.target.value })}
+          />
+
+          <Input
+            placeholder="Grade"
+            value={education.grade}
+            onChange={(e) => setEducation({ ...education, grade: e.target.value })}
+          />
+
+          <Input
+            placeholder="Location"
+            value={education.location}
+            onChange={(e) => setEducation({ ...education, location: e.target.value })}
+          />
+          {/* IMAGE UPLOAD */}
+          <label className="flex flex-col items-center justify-center h-40 border-2 border-dashed rounded-xl cursor-pointer overflow-hidden">
+
+            {education.imageId ? (
+              <img
+                src={getFileView(education.imageId)}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <p>Upload Education Image</p>
+            )}
+
+            <input
+              type="file"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+
+                const res = await uploadFile(file);
+
+                setEducation(prev => ({
+                  ...prev,
+                  imageId: res.$id
+                }));
+              }}
+            />
+          </label>
+
+          <Textarea
+            placeholder="Description"
+            value={education.description}
+            onChange={(e) => setEducation({ ...education, description: e.target.value })}
+          />
+
+          <Button
+            type="button"
+            onClick={async () => {
+              const res = await createEducationAction(education);
+
+              if (res.success) {
+                alert("Education Added ✅");
+
+                // reset
+                setEducation({
+                  institution: "",
+                  degree: "",
+                  field: "",
+                  duration: "",
+                  grade: "",
+                  description: "",
+                  location: "",
+                  imageId: "",
+                 
+                });
+              }
+            }}
+          >
             Add Education
           </Button>
 
-          {arrayData.map((edu, index) => (
-            <div key={index} className="border p-4 rounded-md space-y-3">
-              <div className="flex justify-between items-center">
-                <h4 className="font-medium">Education #{index + 1}</h4>
-                <Button
-                  type="button"
-                  onClick={() => removeArrayItem(index)}
-                  variant="destructive"
-                  size="sm"
-                >
-                  Remove
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor={`edu-institution-${index}`}>Institution</Label>
-                  <Input
-                    id={`edu-institution-${index}`}
-                    value={edu.institution || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'institution', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`edu-degree-${index}`}>Degree</Label>
-                  <Input
-                    id={`edu-degree-${index}`}
-                    value={edu.degree || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'degree', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`edu-field-${index}`}>Field</Label>
-                  <Input
-                    id={`edu-field-${index}`}
-                    value={edu.field || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'field', e.target.value)}
-                  />
-                </div>
-
-
-                <div>
-                  <Label htmlFor={`edu-duration-${index}`}>Duration</Label>
-                  <Input
-                    id={`edu-duration-${index}`}
-                    value={edu.duration || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'duration', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`edu-grade-${index}`}>Grade</Label>
-                  <Input
-                    id={`edu-grade-${index}`}
-                    value={edu.grade || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'grade', e.target.value)}
-                  />
-                </div>
-                {/* NEW FIELDS */}
-                <div>
-                  <Label htmlFor={`edu-location-${index}`}>Location</Label>
-                  <Input
-                    id={`edu-location-${index}`}
-                    value={edu.location || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'location', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`edu-image-${index}`}>Background Image URL</Label>
-                  <Input
-                    id={`edu-image-${index}`}
-                    value={edu.image || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'image', e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor={`edu-description-${index}`}>Description</Label>
-                <Textarea
-                  id={`edu-description-${index}`}
-                  value={edu.description || ''}
-                  onChange={(e) => handleArrayItemChange(index, 'description', e.target.value)}
-                  rows={3}
-                />
-              </div>
-            </div>
-          ))}
         </div>
       )}
-
       {/* Achievements Tab */}
       {activeTab === 'achievements' && (
-        <div className="space-y-4">
-          <Button type="button" onClick={addArrayItem} variant="outline">
+        <div className="space-y-6">
+
+          <div className="space-y-2">
+            <Label>Title</Label>
+            <Input
+              value={achievement.title}
+              onChange={(e) => setAchievement({ ...achievement, title: e.target.value })}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              placeholder="Organization"
+              value={achievement.organization}
+              onChange={(e) => setAchievement({ ...achievement, organization: e.target.value })}
+            />
+            <Input
+              placeholder="Date"
+              value={achievement.date}
+              onChange={(e) => setAchievement({ ...achievement, date: e.target.value })}
+            />
+          </div>
+
+          {/* IMAGE UPLOAD */}
+          <label className="flex flex-col items-center justify-center w-full h-44 border-2 border-dashed rounded-xl cursor-pointer hover:bg-gray-50">
+
+            {achievement.imageId ? (
+              <img
+                src={getFileView(achievement.imageId) || "/placeholder-image.jpg"}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <p className="text-gray-500">Click to upload certificate</p>
+            )}
+
+            <input
+              type="file"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+
+                const res = await uploadFile(file);
+
+                setAchievement(prev => ({
+                  ...prev,
+                  imageId: res.$id
+                }));
+              }}
+            />
+          </label>
+
+          <Textarea
+            placeholder="Description"
+            value={achievement.description}
+            onChange={(e) => setAchievement({ ...achievement, description: e.target.value })}
+          />
+
+          <Button
+            onClick={async () => {
+              const res = await createAchievementAction(achievement);
+
+              if (res.success) {
+                alert("Achievement Added ✅");
+
+                setAchievement({
+                  title: "",
+                  organization: "",
+                  date: "",
+                  description: "",
+                  link: "",
+                  imageId: "",
+                });
+
+                fetchData();
+              } else {
+                alert("Error ❌");
+              }
+            }}
+          >
             Add Achievement
           </Button>
 
-          {arrayData.map((achievement, index) => (
-            <div key={index} className="border p-4 rounded-md space-y-3">
-              <div className="flex justify-between items-center">
-                <h4 className="font-medium">Achievement #{index + 1}</h4>
-                <Button
-                  type="button"
-                  onClick={() => removeArrayItem(index)}
-                  variant="destructive"
-                  size="sm"
-                >
-                  Remove
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor={`ach-title-${index}`}>Title</Label>
-                  <Input
-                    id={`ach-title-${index}`}
-                    value={achievement.title || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'title', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`ach-organization-${index}`}>Organization</Label>
-                  <Input
-                    id={`ach-organization-${index}`}
-                    value={achievement.organization || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'organization', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`ach-date-${index}`}>Date</Label>
-                  <Input
-                    id={`ach-date-${index}`}
-                    value={achievement.date || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'date', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`ach-link-${index}`}>Link (optional)</Label>
-                  <Input
-                    id={`ach-link-${index}`}
-                    value={achievement.link || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'link', e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor={`ach-description-${index}`}>Description</Label>
-                <Textarea
-                  id={`ach-description-${index}`}
-                  value={achievement.description || ''}
-                  onChange={(e) => handleArrayItemChange(index, 'description', e.target.value)}
-                  rows={3}
-                />
-              </div>
-            </div>
-          ))}
         </div>
       )}
+
 
       {/* Projects Tab */}
       {activeTab === 'projects' && (
-        <div className="space-y-4">
-          <Button type="button" onClick={addArrayItem} variant="outline">
-            Add Project
-          </Button>
+        <div className="space-y-6">
 
-          {arrayData.map((project, index) => (
-            <div key={index} className="border p-4 rounded-md space-y-3">
-              <div className="flex justify-between items-center">
-                <h4 className="font-medium">Project #{index + 1}</h4>
+          {/* Project Name */}
+          <div className="space-y-2">
+            <Label>Project Name</Label>
+            <Input
+              placeholder="Enter project name"
+              value={project.name}
+              onChange={(e) => setProject({ ...project, name: e.target.value })}
+            />
+          </div>
+
+          {/* Description */}
+          <div className="space-y-2">
+            <Label>Description</Label>
+            <Textarea
+              placeholder="Write project description (points separated by . or new line)"
+              value={project.description}
+              onChange={(e) => setProject({ ...project, description: e.target.value })}
+              rows={4}
+            />
+          </div>
+
+          {/* IMAGE UPLOAD (🔥 IMPROVED UI) */}
+          <div className="space-y-2">
+            <Label>Project Image</Label>
+
+            <label className="flex flex-col items-center justify-center w-full h-44 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition overflow-hidden">
+
+              {project.imageId ? (
+                <img
+                  src={getFileView(project.imageId) || "/placeholder-image.jpg"}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="text-center text-gray-500">
+                  <p className="text-sm font-medium">Click to upload image</p>
+                  <p className="text-xs">PNG, JPG, WEBP</p>
+                </div>
+              )}
+
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+
+                  const res = await uploadFile(file);
+
+                  setProject(prev => ({
+                    ...prev,
+                    imageId: res.$id
+                  }));
+                }}
+              />
+            </label>
+          </div>
+
+          {/* Technologies (Tags) */}
+          <div className="space-y-2">
+            <Label>Technologies Used</Label>
+
+            {project.tags.map((tag, index) => (
+              <div key={index} className="flex gap-2">
+                <Input
+                  value={tag}
+                  onChange={(e) => {
+                    const newTags = [...project.tags];
+                    newTags[index] = e.target.value;
+                    setProject({ ...project, tags: newTags });
+                  }}
+                  placeholder="e.g. React"
+                />
                 <Button
                   type="button"
-                  onClick={() => removeArrayItem(index)}
                   variant="destructive"
-                  size="sm"
+                  onClick={() => {
+                    const newTags = project.tags.filter((_, i) => i !== index);
+                    setProject({ ...project, tags: newTags });
+                  }}
                 >
                   Remove
                 </Button>
               </div>
+            ))}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor={`proj-name-${index}`}>Name</Label>
-                  <Input
-                    id={`proj-name-${index}`}
-                    value={project.name || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'name', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`proj-image-${index}`}>Image Path</Label>
-                  <Input
-                    id={`proj-image-${index}`}
-                    value={project.imageId || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'imageId', e.target.value)}
-                    placeholder="/images/projects/p1.png"
-                  />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() =>
+                setProject({ ...project, tags: [...project.tags, ""] })
+              }
+            >
+              + Add Technology
+            </Button>
+          </div>
 
-                </div>
-                <div>
-                  <Label htmlFor={`proj-link-${index}`}>Project Link</Label>
-                  <Input
-                    id={`proj-link-${index}`}
-                    value={project.link || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'link', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`proj-github-${index}`}>GitHub Link (optional)</Label>
-                  <Input
-                    id={`proj-github-${index}`}
-                    value={project.github || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'github', e.target.value)}
-                  />
-                </div>
-              </div>
+          {/* Links */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Project Link</Label>
+              <Input
+                placeholder="https://your-live-link.com"
+                value={project.link}
+                onChange={(e) => setProject({ ...project, link: e.target.value })}
+              />
+            </div>
 
-              <div>
-                <Label htmlFor={`proj-description-${index}`}>Description</Label>
-                <Textarea
-                  id={`proj-description-${index}`}
-                  value={project.description || ''}
-                  onChange={(e) => handleArrayItemChange(index, 'description', e.target.value)}
-                  rows={3}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label>GitHub Link</Label>
+              <Input
+                placeholder="https://github.com/your-repo"
+                value={project.github}
+                onChange={(e) => setProject({ ...project, github: e.target.value })}
+              />
+            </div>
+          </div>
 
-              <div>
-                <Label>Tags</Label>
-                {project.tags?.map((tag: string, tagIndex: number) => (
-                  <div key={tagIndex} className="flex gap-2 mb-2">
-                    <Input
-                      value={tag || ''}
-                      onChange={(e) => handleStringArrayChange(index, e.target.value, 'tags', tagIndex)}
-                    />
-                    <Button
-                      type="button"
-                      onClick={() => removeStringArrayItem(index, 'tags', tagIndex)}
-                      variant="destructive"
-                      size="sm"
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  type="button"
-                  onClick={() => addStringArrayItem(index, 'tags')}
-                  variant="outline"
-                  size="sm"
-                >
-                  Add Tag
-                </Button>
-              </div>
-            </div> 
-          ))}
+          {/* ADD BUTTON */}
+          <div className="pt-4">
+            <Button
+              className="w-full md:w-auto"
+              onClick={async () => {
+                const res = await createProjectAction(project);
+
+                if (res.success) {
+                  alert("Project Added ✅");
+
+                  setProject({
+                    name: "",
+                    description: "",
+                    tags: [],
+                    imageId: "",
+                    link: "",
+                    github: "",
+                  });
+
+                  fetchData();
+                } else {
+                  alert("Error ❌");
+                }
+              }}
+            >
+              Add Project
+            </Button>
+          </div>
+
         </div>
       )}
-
       {/* About Tab */}
       {activeTab === 'about' && (
         <div className="space-y-4">
@@ -1014,136 +972,144 @@ export default function AdminPanel({ activeTab }: { activeTab: string }) {
 
       {/* Blog Tab */}
       {activeTab === 'blog' && (
-        <div className="space-y-4">
-          <Button type="button" onClick={addArrayItem} variant="outline">
-            Add Blog Post
+        <div className="space-y-6">
+
+          <Input
+            placeholder="Title"
+            value={blog.title}
+            onChange={(e) => {
+              const title = e.target.value;
+              setBlog({
+                ...blog,
+                title,
+                slug: title.toLowerCase().replace(/\s+/g, "-")
+              });
+            }}
+          />
+
+          <Input
+            placeholder="Slug"
+            value={blog.slug}
+            onChange={(e) => setBlog({ ...blog, slug: e.target.value })}
+          />
+
+          <Input
+            placeholder="Author"
+            value={blog.author}
+            onChange={(e) => setBlog({ ...blog, author: e.target.value })}
+          />
+
+          <Input
+            placeholder="Date"
+            value={blog.date}
+            onChange={(e) => setBlog({ ...blog, date: e.target.value })}
+          />
+
+          <Input
+            placeholder="Read Time"
+            value={blog.readTime}
+            onChange={(e) => setBlog({ ...blog, readTime: e.target.value })}
+          />
+
+          {/* IMAGE */}
+          <label className="flex flex-col items-center justify-center h-44 border-2 border-dashed rounded-xl cursor-pointer overflow-hidden">
+
+            {blog.imageId ? (
+              <img
+                src={getFileView(blog.imageId)}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <p>Upload Blog Image</p>
+            )}
+
+            <input
+              type="file"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+
+                const res = await uploadFile(file);
+
+                setBlog(prev => ({
+                  ...prev,
+                  imageId: res.$id
+                }));
+              }}
+            />
+          </label>
+
+          <Textarea
+            placeholder="Content (HTML supported)"
+            value={blog.content}
+            onChange={(e) => setBlog({ ...blog, content: e.target.value })}
+          />
+
+          {/* TAGS */}
+          {blog.tags.map((tag, i) => (
+            <Input
+              key={i}
+              value={tag}
+              onChange={(e) => {
+                const t = [...blog.tags];
+                t[i] = e.target.value;
+                setBlog({ ...blog, tags: t });
+              }}
+            />
+          ))}
+
+          <Button
+            type="button"
+            onClick={() =>
+              setBlog({ ...blog, tags: [...blog.tags, ""] })
+            }
+          >
+            Add Tag
           </Button>
 
-          {arrayData.map((post, index) => (
-            <div key={index} className="border p-4 rounded-md space-y-3">
-              <div className="flex justify-between items-center">
-                <h4 className="font-medium">Blog Post #{index + 1}</h4>
-                <Button
-                  type="button"
-                  onClick={() => removeArrayItem(index)}
-                  variant="destructive"
-                  size="sm"
-                >
-                  Remove
-                </Button>
-              </div>
+          <Button
+            type="button"
+            onClick={async () => {
+              const res = await createBlogAction(blog);
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor={`blog-title-${index}`}>Title</Label>
-                  <Input
-                    id={`blog-title-${index}`}
-                    value={post.title || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'title', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`blog-slug-${index}`}>Slug</Label>
-                  <Input
-                    id={`blog-slug-${index}`}
-                    value={post.slug || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'slug', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`blog-date-${index}`}>Date</Label>
-                  <Input
-                    id={`blog-date-${index}`}
-                    value={post.date || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'date', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`blog-readTime-${index}`}>Read Time</Label>
-                  <Input
-                    id={`blog-readTime-${index}`}
-                    value={post.readTime || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'readTime', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`blog-image-${index}`}>Image URL</Label>
-                  <Input
-                    id={`blog-image-${index}`}
-                    value={post.image || ''}
-                    onChange={(e) => handleArrayItemChange(index, 'image', e.target.value)}
-                  />
-                </div>
-              </div>
+              if (res.success) {
+                alert("Blog Added ✅");
 
-              <div>
-                <Label htmlFor={`blog-excerpt-${index}`}>Excerpt</Label>
-                <Textarea
-                  id={`blog-excerpt-${index}`}
-                  value={post.excerpt || ''}
-                  onChange={(e) => handleArrayItemChange(index, 'excerpt', e.target.value)}
-                  rows={3}
-                />
-              </div> 
+                // ✅ RESET
+                setBlog({
+                  title: "",
+                  excerpt: "",
+                  content: "",
+                  date: "",
+                  readTime: "",
+                  tags: [],
+                  imageId: "",
+                  slug: "",
+                  author: "",
+                });
+              }
+            }}
+          >
+            Add Blog
+          </Button>
 
-              <div>
-                <Label htmlFor={`blog-content-${index}`}>Content</Label>
-                <Textarea
-                  id={`blog-content-${index}`}
-                  value={post.content || ''}
-                  onChange={(e) => handleArrayItemChange(index, 'content', e.target.value)}
-                  rows={6}
-                />
-              </div>
-
-              <div>
-                <Label>Tags</Label>
-                {post.tags?.map((tag: string, tagIndex: number) => (
-                  <div key={tagIndex} className="flex gap-2 mb-2">
-                    <Input
-                      value={tag || ''}
-                      onChange={(e) => handleStringArrayChange(index, e.target.value, 'tags', tagIndex)}
-                    />
-                    <Button
-                      type="button"
-                      onClick={() => removeStringArrayItem(index, 'tags', tagIndex)}
-                      variant="destructive"
-                      size="sm"
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  type="button"
-                  onClick={() => addStringArrayItem(index, 'tags')}
-                  variant="outline"
-                  size="sm"
-                >
-                  Add Tag
-                </Button>
-              </div>
-            </div>
-          ))}
         </div>
       )}
 
-      {/* Submit Button */}
-      <div className="flex justify-between items-center pt-4 border-t">
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className="px-4 py-2"
-        >
-          {isLoading ? 'Saving...' : 'Save Changes'}
-        </Button>
 
-        {message && (
-          <span className={`text-sm ${message.includes('Error') ? 'text-red-600' : 'text-green-600'}`}>
-            {message}
-          </span>
-        )}
-      </div>
+      {/* Submit Button */}
+      {(activeTab === 'intro' || activeTab === 'about') && (
+  <div className="flex justify-end pt-4 border-t">
+    <Button
+      onClick={handleSubmit}
+      disabled={isLoading}
+      className="px-4 py-2"
+    >
+      {isLoading ? 'Saving...' : 'Save Changes'}
+    </Button>
+  </div>
+)}
     </form>
   );
 }
