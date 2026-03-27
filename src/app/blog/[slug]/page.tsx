@@ -1,11 +1,9 @@
 'use client';
 
-import BlogListLayout from '@/app/blog/page'; // 👈 IMPORTANT
+import BlogLayout from '@/app/components/BlogLayout';
 import { useParams } from 'next/navigation';
 
-export default function BlogSlugPage() {
+export default function Page() {
   const params = useParams();
-  const slug = params?.slug as string;
-
-  return <BlogListLayout initialSlug={slug} />;
+  return <BlogLayout initialSlug={params.slug as string} />;
 }

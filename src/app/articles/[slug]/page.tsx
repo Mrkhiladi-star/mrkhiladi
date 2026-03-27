@@ -1,11 +1,9 @@
 'use client';
 
-import ArticleListLayout from '@/app/articles/page';
+import ArticleLayout from '@/app/components/ArticleLayout';
 import { useParams } from 'next/navigation';
 
-export default function ArticleSlugPage() {
+export default function Page() {
   const params = useParams();
-  const slug = params?.slug as string;
-
-  return <ArticleListLayout initialSlug={slug} />;
+  return <ArticleLayout initialSlug={params.slug as string} />;
 }
