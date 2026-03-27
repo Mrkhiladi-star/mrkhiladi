@@ -42,22 +42,24 @@ export const useAuthStore = create<IAuthStore>()(
           set({ session: null, user: null, isLoggedIn: false, isAdmin: false });
         }
       },
-      async login(email: string, password: string) {
-        try {
-          await account.deleteSessions().catch(() => {});
-          const session = await account.createEmailPasswordSession(email, password);
-          const user = await account.get<AdminPrefs>();
-          const isAdmin = user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-          set({ session, user, isLoggedIn: !!session, isAdmin });
-          return { success: true };
-        } catch (error) {
-          console.error("Login failed:", error);
-          return {
-            success: false,
-            error: error instanceof AppwriteException ? error : null,
-          };
-        }
-      },
+    async login(email: string, password: string) {
+  try {
+    const session = await account.createEmailPasswordSession(email, password);
+    const user = await account.get<AdminPrefs>();
+
+    const isAdmin = user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+
+    set({ session, user, isLoggedIn: !!session, isAdmin });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Login failed:", error);
+    return {
+      success: false,
+      error: error instanceof AppwriteException ? error : null,
+    };
+  }
+},
       async logout() {
         try {
           const session = await account.getSession("current").catch(() => null);
