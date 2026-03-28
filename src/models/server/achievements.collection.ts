@@ -24,7 +24,7 @@ export default async function createAchievementsCollection() {
       databases.createStringAttribute(db, collectionId, "organization", 100, true),
       databases.createStringAttribute(db, collectionId, "date", 50, true),
       databases.createStringAttribute(db, collectionId, "description", 1000, true),
-      databases.createStringAttribute(db, collectionId, "link", 500, false),
+      
       databases.createStringAttribute(db, collectionId, "imageId", 500, false),
     ]);
 
@@ -50,7 +50,6 @@ export const achievementsCollection = {
       organization: doc.organization,
       date: doc.date,
       description: doc.description,
-      link: doc.link,
       imageId: doc.imageId || "",
       image: doc.imageId ? getFileView(doc.imageId) : undefined,
     }));
@@ -72,7 +71,6 @@ export const achievementsCollection = {
         organization: data.organization,
         date: data.date,
         description: data.description,
-        link: data.link,
         imageId: data.imageId || "",
       }
     );

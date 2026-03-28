@@ -3,10 +3,7 @@ import { immer } from "zustand/middleware/immer";
 import { persist } from "zustand/middleware";
 import { AppwriteException, Models } from "appwrite";
 import { account } from "@/models/client/config";
-import { setClientSession } from "@/models/client/config";
-
 interface AdminPrefs {}
-
 interface IAuthStore {
   session: Models.Session | null;
   user: Models.User<AdminPrefs> | null;
@@ -24,7 +21,6 @@ interface IAuthStore {
   }>;
   logout(): Promise<void>;
 }
-
 export const useAuthStore = create<IAuthStore>()(
   persist(
     immer((set) => ({
@@ -33,74 +29,26 @@ export const useAuthStore = create<IAuthStore>()(
       isLoggedIn: false,
       isAdmin: false,
       hydrated: false,
-
       setHydrated() {
         set({ hydrated: true });
       },
-
-      // ✅ Stable verifySession
       async verifySession() {
         try {
-          const sessionId =
-            typeof window !== "undefined"
-              ? localStorage.getItem("sessionId")
-              : null;
-
-          if (!sessionId) throw new Error("No session");
-
-          // 🔥 always attach latest session
-          setClientSession();
-
+          const session = await account.getSession("current");
           const user = await account.get<AdminPrefs>();
-
-          set({
-            session: { $id: sessionId } as any,
-            user,
-            isLoggedIn: true,
-            isAdmin:
-              user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL,
-          });
-        } catch {
-          // 🔥 cleanup if invalid
-          if (typeof window !== "undefined") {
-            localStorage.removeItem("sessionId");
-          }
-
-          set({
-            session: null,
-            user: null,
-            isLoggedIn: false,
-            isAdmin: false,
-          });
+          const isAdmin = user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+          set({ session, user, isLoggedIn: !!session, isAdmin });
+        } catch (error) {
+          set({ session: null, user: null, isLoggedIn: false, isAdmin: false });
         }
       },
-
-      // ✅ Login (with duplicate session fix)
       async login(email: string, password: string) {
         try {
-          // 🔥 delete old session first (important fix)
-          await account.deleteSession("current").catch(() => {});
-
-          const session =
-            await account.createEmailPasswordSession(email, password);
-
-          if (typeof window !== "undefined") {
-            localStorage.setItem("sessionId", session.$id);
-          }
-
-          // 🔥 attach immediately
-          setClientSession();
-
+          await account.deleteSessions().catch(() => {});
+          const session = await account.createEmailPasswordSession(email, password);
           const user = await account.get<AdminPrefs>();
-
-          set({
-            session,
-            user,
-            isLoggedIn: true,
-            isAdmin:
-              user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL,
-          });
-
+          const isAdmin = user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+          set({ session, user, isLoggedIn: !!session, isAdmin });
           return { success: true };
         } catch (error) {
           console.error("Login failed:", error);
@@ -110,22 +58,20 @@ export const useAuthStore = create<IAuthStore>()(
           };
         }
       },
-
-      // ✅ Logout clean
       async logout() {
         try {
-          if (typeof window !== "undefined") {
-            localStorage.removeItem("sessionId");
+          const session = await account.getSession("current").catch(() => null);
+          if (session) {
+            await account.deleteSession("current");
           }
-
-          await account.deleteSession("current").catch(() => {});
-
-          set({
-            session: null,
-            user: null,
-            isLoggedIn: false,
-            isAdmin: false,
-          });
+          set({ session: null, user: null, isLoggedIn: false, isAdmin: false });
+          document.cookie
+            .split(";")
+            .forEach(
+              (c) =>
+                (document.cookie =
+                  c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"))
+            );
         } catch (error) {
           console.error("Logout failed:", error);
         }
@@ -133,13 +79,6 @@ export const useAuthStore = create<IAuthStore>()(
     })),
     {
       name: "auth",
-
-      // 🔥 persist only safe data
-      partialize: (state) => ({
-        user: state.user,
-        isAdmin: state.isAdmin,
-      }),
-
       onRehydrateStorage() {
         return (state, error) => {
           if (!error) state?.setHydrated();
