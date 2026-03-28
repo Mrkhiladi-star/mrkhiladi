@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
-<url><loc>https://mrkhiladi.app.vercel.app/icon.png</loc><lastmod>2026-03-27T08:23:22.806Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://mrkhiladi.app.vercel.app/login</loc><lastmod>2026-03-27T08:23:22.806Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://mrkhiladi.app.vercel.app</loc><lastmod>2026-03-27T08:23:22.806Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://mrkhiladi.app.vercel.app/skills</loc><lastmod>2026-03-27T08:23:22.806Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://mrkhiladi.app.vercel.app/articles</loc><lastmod>2026-03-27T08:23:22.806Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://mrkhiladi.app.vercel.app/blog</loc><lastmod>2026-03-27T08:23:22.806Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://mrkhiladi.app.vercel.app/about</loc><lastmod>2026-03-27T08:23:22.806Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://mrkhiladi.app.vercel.app/intro</loc><lastmod>2026-03-27T08:23:22.806Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://mrkhiladi.app.vercel.app/dashboard</loc><lastmod>2026-03-27T08:23:22.806Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://mrkhiladi.app.vercel.app/projects</loc><lastmod>2026-03-27T08:23:22.806Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://mrkhiladi.app.vercel.app/experience</loc><lastmod>2026-03-27T08:23:22.806Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://mrkhiladi.app.vercel.app/education</loc><lastmod>2026-03-27T08:23:22.806Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://mrkhiladi.app.vercel.app/achievements</loc><lastmod>2026-03-27T08:23:22.806Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://mrkhiladi.vercel.app/icon.png</loc><lastmod>2026-03-28T12:28:51.899Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://mrkhiladi.vercel.app/articles</loc><lastmod>2026-03-28T12:28:51.899Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://mrkhiladi.vercel.app/education</loc><lastmod>2026-03-28T12:28:51.899Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://mrkhiladi.vercel.app/blog</loc><lastmod>2026-03-28T12:28:51.899Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://mrkhiladi.vercel.app/dashboard</loc><lastmod>2026-03-28T12:28:51.899Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://mrkhiladi.vercel.app/about</loc><lastmod>2026-03-28T12:28:51.899Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://mrkhiladi.vercel.app</loc><lastmod>2026-03-28T12:28:51.899Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://mrkhiladi.vercel.app/projects</loc><lastmod>2026-03-28T12:28:51.899Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://mrkhiladi.vercel.app/skills</loc><lastmod>2026-03-28T12:28:51.899Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://mrkhiladi.vercel.app/intro</loc><lastmod>2026-03-28T12:28:51.899Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://mrkhiladi.vercel.app/login</loc><lastmod>2026-03-28T12:28:51.899Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://mrkhiladi.vercel.app/experience</loc><lastmod>2026-03-28T12:28:51.899Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://mrkhiladi.vercel.app/achievements</loc><lastmod>2026-03-28T12:28:51.899Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
 </urlset>
