@@ -1,7 +1,7 @@
 import { ID, Permission, Query } from "node-appwrite";
 import { db, blogCollection as collectionId } from "../name";
 import { databases } from "./config";
-import { getFileView } from "@/lib/appwrite"; // ✅ ADD THIS
+import { getFileView } from "@/lib/appwrite";
 
 export default async function createBlogCollection() {
   try {
@@ -19,14 +19,13 @@ export default async function createBlogCollection() {
 
     await Promise.all([
       databases.createStringAttribute(db, collectionId, "title", 200, true),
-      databases.createStringAttribute(db, collectionId, "excerpt", 500, true),
-     
+      databases.createStringAttribute(db, collectionId, "content", 10000, true), // ✅ important
       databases.createStringAttribute(db, collectionId, "date", 50, true),
       databases.createStringAttribute(db, collectionId, "readTime", 50, true),
       databases.createStringAttribute(db, collectionId, "tags", 500, true, undefined, true),
-      databases.createStringAttribute(db, collectionId, "imageId", 500, false), // ✅ OPTIONAL like article
+      databases.createStringAttribute(db, collectionId, "imageId", 500, false),
       databases.createStringAttribute(db, collectionId, "slug", 200, true),
-       databases.createStringAttribute(db, collectionId, "author", 100, false),
+      databases.createStringAttribute(db, collectionId, "author", 100, false),
     ]);
 
     console.log("✅ Blog collection created");
@@ -39,24 +38,20 @@ export const blogCollection = {
 
   async getPublicPosts() {
     const response = await databases.listDocuments(db, collectionId, [
-      Query.orderDesc("$createdAt") // ✅ SAME as article
+      Query.orderDesc("$createdAt")
     ]);
 
     return response.documents.map(doc => ({
       id: doc.$id,
       title: doc.title,
- 
-      content: doc.content,
+      content: doc.content, // ✅ used for excerpt
       date: doc.date,
       readTime: doc.readTime,
       tags: doc.tags || [],
       imageId: doc.imageId || "",
-
-      // ✅ MAIN FIX
       image: doc.imageId ? getFileView(doc.imageId) : null,
-
       slug: doc.slug,
-      author: "Ramu Yadav"
+      author: doc.author || "Ramu Yadav",
     }));
   },
 
@@ -73,22 +68,17 @@ export const blogCollection = {
     return {
       id: doc.$id,
       title: doc.title,
-   
       content: doc.content,
       date: doc.date,
       readTime: doc.readTime,
       tags: doc.tags || [],
       imageId: doc.imageId || "",
-
-      // ✅ MAIN FIX
       image: doc.imageId ? getFileView(doc.imageId) : null,
-
       slug: doc.slug,
-      author: doc.author || "Ramu Yadav"
+      author: doc.author || "Ramu Yadav",
     };
   },
 
-  // ❌ REMOVE updatePosts logic (not needed anymore)
   async createBlog(data: any) {
     return await databases.createDocument(
       db,
@@ -96,14 +86,13 @@ export const blogCollection = {
       ID.unique(),
       {
         title: data.title,
-      
         content: data.content,
         date: data.date,
         readTime: data.readTime,
         tags: data.tags || [],
-        imageId: data.imageId, // ✅ ONLY STORE FILE ID
+        imageId: data.imageId,
         slug: data.slug.trim(),
-       author: data.author || "Ramu Yadav",
+        author: data.author || "Ramu Yadav",
       }
     );
   },
