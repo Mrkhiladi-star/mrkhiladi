@@ -20,7 +20,7 @@ export default async function createBlogCollection() {
     await Promise.all([
       databases.createStringAttribute(db, collectionId, "title", 200, true),
       databases.createStringAttribute(db, collectionId, "excerpt", 500, true),
-      databases.createStringAttribute(db, collectionId, "content", 10000, true),
+     
       databases.createStringAttribute(db, collectionId, "date", 50, true),
       databases.createStringAttribute(db, collectionId, "readTime", 50, true),
       databases.createStringAttribute(db, collectionId, "tags", 500, true, undefined, true),
@@ -45,7 +45,7 @@ export const blogCollection = {
     return response.documents.map(doc => ({
       id: doc.$id,
       title: doc.title,
-      excerpt: doc.excerpt || "",
+ 
       content: doc.content,
       date: doc.date,
       readTime: doc.readTime,
@@ -73,7 +73,7 @@ export const blogCollection = {
     return {
       id: doc.$id,
       title: doc.title,
-      excerpt: doc.excerpt,
+   
       content: doc.content,
       date: doc.date,
       readTime: doc.readTime,
@@ -96,7 +96,7 @@ export const blogCollection = {
       ID.unique(),
       {
         title: data.title,
-        excerpt: data.excerpt || "",
+      
         content: data.content,
         date: data.date,
         readTime: data.readTime,

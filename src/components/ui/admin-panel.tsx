@@ -233,126 +233,148 @@ export default function AdminPanel({ activeTab }: { activeTab: string }) {
 
 
       {activeTab === 'article' && (
-        <div className="space-y-6">
+  <div className="space-y-6">
 
-          <Input
-            placeholder="Title"
-            value={article.title}
-            onChange={(e) => {
-              const title = e.target.value;
+    <Input
+      placeholder="Title"
+      value={article.title}
+      onChange={(e) => {
+        const title = e.target.value;
 
-              setArticle({
-                ...article,
-                title,
-                slug: title.toLowerCase().replace(/\s+/g, "-") // ✅ auto slug
-              });
-            }}
-          />
+        setArticle({
+          ...article,
+          title,
+          slug: title.toLowerCase().replace(/\s+/g, "-")
+        });
+      }}
+    />
 
-          <Input
-            placeholder="Slug"
-            value={article.slug}
-            onChange={(e) => setArticle({ ...article, slug: e.target.value })}
-          />
+    <Input
+      placeholder="Slug"
+      value={article.slug}
+      onChange={(e) => setArticle({ ...article, slug: e.target.value })}
+    />
 
-          <Input
-            placeholder="Date"
-            value={article.date}
-            onChange={(e) => setArticle({ ...article, date: e.target.value })}
-          />
+    <Input
+      placeholder="Date"
+      value={article.date}
+      onChange={(e) => setArticle({ ...article, date: e.target.value })}
+    />
 
-          <Input
-            placeholder="Read Time"
-            value={article.readTime}
-            onChange={(e) => setArticle({ ...article, readTime: e.target.value })}
-          />
+    <Input
+      placeholder="Read Time"
+      value={article.readTime}
+      onChange={(e) => setArticle({ ...article, readTime: e.target.value })}
+    />
 
-          {/* IMAGE UPLOAD */}
-          <label className="flex flex-col items-center justify-center h-44 border-2 border-dashed rounded-xl cursor-pointer overflow-hidden">
+    {/* IMAGE UPLOAD */}
+    <label className="flex flex-col items-center justify-center h-44 border-2 border-dashed rounded-xl cursor-pointer overflow-hidden">
 
-            {article.imageId ? (
-              <img
-                src={getFileView(article.imageId) || "/placeholder-image.jpg"}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <p>Upload Article Image</p>
-            )}
-
-            <input
-              type="file"
-              className="hidden"
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-
-                const res = await uploadFile(file);
-
-                setArticle(prev => ({
-                  ...prev,
-                  imageId: res.$id
-                }));
-              }}
-            />
-          </label>
-
-          <Textarea
-            placeholder="Content (HTML supported)"
-            value={article.content}
-            onChange={(e) => setArticle({ ...article, content: e.target.value })}
-            rows={6}
-          />
-
-          {/* TAGS */}
-          {article.tags.map((tag, i) => (
-            <Input
-              key={i}
-              value={tag}
-              onChange={(e) => {
-                const t = [...article.tags];
-                t[i] = e.target.value;
-                setArticle({ ...article, tags: t });
-              }}
-            />
-          ))}
-
-          {/* ✅ FIX: prevent form submit */}
-          <Button
-            type="button"
-            onClick={() =>
-              setArticle({ ...article, tags: [...article.tags, ""] })
-            }
-          >
-            Add Tag
-          </Button>
-
-          {/* ✅ FIX: prevent form submit */}
-          <Button
-            type="button"
-            onClick={async () => {
-              const res = await createArticleAction(article);
-
-              if (res.success) {
-                alert("Article Added ✅");
-
-                // ✅ reset form
-                setArticle({
-                  title: "",
-                  content: "",
-                  date: "",
-                  readTime: "",
-                  tags: [],
-                  imageId: "",
-                  slug: "",
-                });
-              }
-            }}
-          >
-            Add Article
-          </Button>
-
-        </div>
+      {article.imageId ? (
+        <img
+          src={getFileView(article.imageId) || "/placeholder-image.jpg"}
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <p>Upload Article Image</p>
       )}
+
+      <input
+        type="file"
+        className="hidden"
+        onChange={async (e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+
+          try {
+            const res = await uploadFile(file);
+
+            setArticle(prev => ({
+              ...prev,
+              imageId: res.$id
+            }));
+          } catch (err) {
+            console.error("Image upload error:", err);
+            alert("Image upload failed ❌");
+          }
+        }}
+      />
+    </label>
+
+    <Textarea
+      placeholder="Content (HTML supported)"
+      value={article.content}
+      onChange={(e) => setArticle({ ...article, content: e.target.value })}
+      rows={6}
+    />
+
+    {/* TAGS */}
+    {article.tags.map((tag, i) => (
+      <Input
+        key={i}
+        value={tag}
+        onChange={(e) => {
+          const t = [...article.tags];
+          t[i] = e.target.value;
+          setArticle({ ...article, tags: t });
+        }}
+      />
+    ))}
+
+    <Button
+      type="button"
+      onClick={() =>
+        setArticle({ ...article, tags: [...article.tags, ""] })
+      }
+    >
+      Add Tag
+    </Button>
+
+    {/* 🔥 FINAL FIX BUTTON */}
+    <Button
+      type="button"
+      onClick={async () => {
+        console.log("ARTICLE CLICKED");
+
+        // ✅ VALIDATION
+        if (!article.title || !article.content || !article.slug) {
+          alert("Please fill Title, Content, and Slug");
+          return;
+        }
+
+        try {
+          const res = await createArticleAction(article);
+
+          console.log("Response:", res);
+
+          if (res.success) {
+            alert("Article Added ✅");
+
+            setArticle({
+              title: "",
+              content: "",
+              date: "",
+              readTime: "",
+              tags: [],
+              imageId: "",
+              slug: "",
+            });
+
+          } else {
+            alert("Failed ❌ (Check console)");
+          }
+
+        } catch (err) {
+          console.error("Create article error:", err);
+          alert("Error ❌");
+        }
+      }}
+    >
+      Add Article
+    </Button>
+
+  </div>
+)}
 
       {/* Skills Tab */}
       {activeTab === 'skills' && (
@@ -970,132 +992,156 @@ export default function AdminPanel({ activeTab }: { activeTab: string }) {
         </div>
       )}
 
-      {/* Blog Tab */}
       {activeTab === 'blog' && (
-        <div className="space-y-6">
+  <div className="space-y-6">
 
-          <Input
-            placeholder="Title"
-            value={blog.title}
-            onChange={(e) => {
-              const title = e.target.value;
-              setBlog({
-                ...blog,
-                title,
-                slug: title.toLowerCase().replace(/\s+/g, "-")
-              });
-            }}
-          />
+    <Input
+      placeholder="Title"
+      value={blog.title}
+      onChange={(e) => {
+        const title = e.target.value;
+        setBlog({
+          ...blog,
+          title,
+          slug: title.toLowerCase().replace(/\s+/g, "-")
+        });
+      }}
+    />
 
-          <Input
-            placeholder="Slug"
-            value={blog.slug}
-            onChange={(e) => setBlog({ ...blog, slug: e.target.value })}
-          />
+    <Input
+      placeholder="Slug"
+      value={blog.slug}
+      onChange={(e) => setBlog({ ...blog, slug: e.target.value })}
+    />
 
-          <Input
-            placeholder="Author"
-            value={blog.author}
-            onChange={(e) => setBlog({ ...blog, author: e.target.value })}
-          />
+    <Input
+      placeholder="Author"
+      value={blog.author}
+      onChange={(e) => setBlog({ ...blog, author: e.target.value })}
+    />
 
-          <Input
-            placeholder="Date"
-            value={blog.date}
-            onChange={(e) => setBlog({ ...blog, date: e.target.value })}
-          />
+    <Input
+      placeholder="Date"
+      value={blog.date}
+      onChange={(e) => setBlog({ ...blog, date: e.target.value })}
+    />
 
-          <Input
-            placeholder="Read Time"
-            value={blog.readTime}
-            onChange={(e) => setBlog({ ...blog, readTime: e.target.value })}
-          />
+    <Input
+      placeholder="Read Time"
+      value={blog.readTime}
+      onChange={(e) => setBlog({ ...blog, readTime: e.target.value })}
+    />
 
-          {/* IMAGE */}
-          <label className="flex flex-col items-center justify-center h-44 border-2 border-dashed rounded-xl cursor-pointer overflow-hidden">
+    {/* IMAGE */}
+    <label className="flex flex-col items-center justify-center h-44 border-2 border-dashed rounded-xl cursor-pointer overflow-hidden">
 
-            {blog.imageId ? (
-              <img
-                src={getFileView(blog.imageId)}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <p>Upload Blog Image</p>
-            )}
-
-            <input
-              type="file"
-              className="hidden"
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-
-                const res = await uploadFile(file);
-
-                setBlog(prev => ({
-                  ...prev,
-                  imageId: res.$id
-                }));
-              }}
-            />
-          </label>
-
-          <Textarea
-            placeholder="Content (HTML supported)"
-            value={blog.content}
-            onChange={(e) => setBlog({ ...blog, content: e.target.value })}
-          />
-
-          {/* TAGS */}
-          {blog.tags.map((tag, i) => (
-            <Input
-              key={i}
-              value={tag}
-              onChange={(e) => {
-                const t = [...blog.tags];
-                t[i] = e.target.value;
-                setBlog({ ...blog, tags: t });
-              }}
-            />
-          ))}
-
-          <Button
-            type="button"
-            onClick={() =>
-              setBlog({ ...blog, tags: [...blog.tags, ""] })
-            }
-          >
-            Add Tag
-          </Button>
-
-          <Button
-            type="button"
-            onClick={async () => {
-              const res = await createBlogAction(blog);
-
-              if (res.success) {
-                alert("Blog Added ✅");
-
-                // ✅ RESET
-                setBlog({
-                  title: "",
-                  excerpt: "",
-                  content: "",
-                  date: "",
-                  readTime: "",
-                  tags: [],
-                  imageId: "",
-                  slug: "",
-                  author: "",
-                });
-              }
-            }}
-          >
-            Add Blog
-          </Button>
-
-        </div>
+      {blog.imageId ? (
+        <img
+          src={getFileView(blog.imageId)}
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <p>Upload Blog Image</p>
       )}
+
+      <input
+        type="file"
+        className="hidden"
+        onChange={async (e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+
+          try {
+            const res = await uploadFile(file);
+
+            setBlog(prev => ({
+              ...prev,
+              imageId: res.$id
+            }));
+          } catch (err) {
+            console.error("Image upload error:", err);
+            alert("Image upload failed ❌");
+          }
+        }}
+      />
+    </label>
+
+    <Textarea
+      placeholder="Content (HTML supported)"
+      value={blog.content}
+      onChange={(e) => setBlog({ ...blog, content: e.target.value })}
+    />
+
+    {/* TAGS */}
+    {blog.tags.map((tag, i) => (
+      <Input
+        key={i}
+        value={tag}
+        onChange={(e) => {
+          const t = [...blog.tags];
+          t[i] = e.target.value;
+          setBlog({ ...blog, tags: t });
+        }}
+      />
+    ))}
+
+    <Button
+      type="button"
+      onClick={() =>
+        setBlog({ ...blog, tags: [...blog.tags, ""] })
+      }
+    >
+      Add Tag
+    </Button>
+
+    {/* 🔥 FIXED BUTTON */}
+    <Button
+      type="button"
+      onClick={async () => {
+
+        console.log("BLOG CLICKED");
+
+        // ✅ VALIDATION
+        if (!blog.title || !blog.content || !blog.slug) {
+          alert("Please fill Title, Content, and Slug");
+          return;
+        }
+
+        try {
+          const res = await createBlogAction(blog);
+
+          console.log("Response:", res);
+
+          if (res.success) {
+            alert("Blog Added ✅");
+
+            setBlog({
+              title: "",
+              excerpt: "",
+              content: "",
+              date: "",
+              readTime: "",
+              tags: [],
+              imageId: "",
+              slug: "",
+              author: "",
+            });
+
+          } else {
+            alert("Failed ❌ (Check console)");
+          }
+
+        } catch (err) {
+          console.error("Create blog error:", err);
+          alert("Error ❌");
+        }
+      }}
+    >
+      Add Blog
+    </Button>
+
+  </div>
+)}
 
 
       {/* Submit Button */}

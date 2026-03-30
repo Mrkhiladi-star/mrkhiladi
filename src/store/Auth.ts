@@ -51,10 +51,10 @@ export const useAuthStore = create<IAuthStore>()(
           set({ session, user, isLoggedIn: !!session, isAdmin });
           return { success: true };
         } catch (error) {
-          console.error("Login failed:", error);
+          //console.error("Login failed:", error);
           return {
             success: false,
-            error: error instanceof AppwriteException ? error : null,
+            error: null,
           };
         }
       },
